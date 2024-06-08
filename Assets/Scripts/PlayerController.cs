@@ -23,19 +23,18 @@ public class PlayerController : MonoBehaviour
     private float pitchLower = -90;
     private int jumpBuffer = 0;
     private bool isGrounded = true;
-    private Vector3 groundNormal;
 
     public GameObject projectile;
     public Transform projSpawn;
     private List<Projectile> projectiles;
     private Queue<Projectile> pInactive;
-    private int projCount = 0;
     public Color[] magicColors;
     private int magicIndex;
     [SerializeField] private SerializableInterface<ISpellBehaviour>[] spells;
 
     private Vector3 aimPoint;
     public LayerMask aimLayers;
+    public LayerMask jumpLayers;
     public Vector3 aimDir;
     
     void Start()
@@ -45,7 +44,6 @@ public class PlayerController : MonoBehaviour
         }
         rb = GetComponent<Rigidbody>();
         cam = transform.GetChild(0);
-        groundNormal = Vector3.zero;
         projectiles = new List<Projectile>();
         pInactive = new Queue<Projectile>();
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
@@ -92,15 +90,15 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate() {
         movement.y = rb.velocity.y;
         rb.velocity = transform.TransformDirection(movement);
-        if(jumpBuffer > 0){
+        if(jumpBuffer > 0 && isGrounded){
             rb.velocity += Vector3.up * jumpStrength;
             jumpBuffer = 0;
             isGrounded = false;
         }
-        jumpBuffer = jumpBuffer > 0 ? jumpBuffer - 1 : 0;
+        jumpBuffer = jumpBuffer > 0 ? 0 : jumpBuffer - 1;
     }
     void OnCollisionEnter(Collision other) {
-        if (other.gameObject.CompareTag("Jumpable")){
+        if (jumpLayers == (jumpLayers | (1<< other.gameObject.layer))){
             isGrounded = true;
         }
     }
