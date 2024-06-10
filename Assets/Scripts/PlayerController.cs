@@ -1,17 +1,19 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using TNRD;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
     // Start is called before the first frame update
     public Transform cam;
+    public Graphic cursor;
     private Rigidbody rb;
     private float yaw;
     private float pitch;
@@ -27,6 +29,7 @@ public class PlayerController : MonoBehaviour
     public GameObject projectile;
     public Transform projSpawn;
     private List<Projectile> projectiles;
+    private Queue<Projectile> clonedProjectiles;
     private Queue<Projectile> pInactive;
     public Color[] magicColors;
     private int magicIndex;
@@ -36,6 +39,9 @@ public class PlayerController : MonoBehaviour
     public LayerMask aimLayers;
     public LayerMask jumpLayers;
     public Vector3 aimDir;
+
+    
+    [SerializeField] private AudioClip[] magicSounds;
     
     void Start()
     {
@@ -46,8 +52,10 @@ public class PlayerController : MonoBehaviour
         cam = transform.GetChild(0);
         projectiles = new List<Projectile>();
         pInactive = new Queue<Projectile>();
+        clonedProjectiles = new Queue<Projectile>();
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
+        cursor.color = magicColors[magicIndex];
     }
 
     // Update is called once per frame
@@ -55,7 +63,7 @@ public class PlayerController : MonoBehaviour
     {
         yaw  += sensitivity*Input.GetAxis("Mouse X");
         pitch -= sensitivity*Input.GetAxis("Mouse Y");
-        pitch = Math.Clamp(pitch, pitchLower, pitchUpper);
+        pitch = Mathf.Clamp(pitch, pitchLower, pitchUpper);
 
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, aimLayers)){
@@ -64,7 +72,7 @@ public class PlayerController : MonoBehaviour
             aimPoint = hit.point;
         }
         else{
-            aimDir = cam.transform.forward;
+            aimDir = (cam.transform.position + cam.transform.forward*100-projSpawn.position).normalized;
         }
             Debug.DrawRay(projSpawn.position, aimDir*100, Color.green);
 
@@ -84,7 +92,11 @@ public class PlayerController : MonoBehaviour
             foreach(Projectile p in projectiles){
                 p.SetState(magicIndex);
             }
+            while (clonedProjectiles.Count > 0){
+                projectiles.Add(clonedProjectiles.Dequeue());
+            }
             Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
+            cursor.color = magicColors[magicIndex];
         }
     }
     void FixedUpdate() {
@@ -104,6 +116,7 @@ public class PlayerController : MonoBehaviour
     }
     private bool CastWand(){
         Projectile p;
+        AudioSource.PlayClipAtPoint(magicSounds[Random.Range(0, magicSounds.Length)], transform.position, 0.1f);
         if(pInactive.Count > 0){
             p = pInactive.Dequeue();
         }
@@ -116,8 +129,26 @@ public class PlayerController : MonoBehaviour
         return true;
     }
 
+    public Projectile[] DuplicateSpell(Projectile original, int count){
+        Projectile[] clones = new Projectile[count];
+        for(int i = 0; i < count; i++){
+            clones[i] = Instantiate(original).GetComponent<Projectile>();
+            clones[i].player=this;
+            clones[i].spell=spells[magicIndex].Value;
+            clones[i].rb.velocity=original.rb.velocity;
+            //need a seperate queue so we do not mess with enumeration during switching
+            clonedProjectiles.Enqueue(clones[i]);
+        }
+        return clones;
+    }
+
     public void QueueInactive(Projectile p){
-        pInactive.Enqueue(p);
+        if(projectiles.Count < 100){
+            pInactive.Enqueue(p);
+        }else{
+            projectiles.Remove(p);
+            Destroy(p);
+        }
     }
 
     public ISpellBehaviour GetSpell(int i){

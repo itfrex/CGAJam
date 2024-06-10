@@ -9,10 +9,12 @@ public class Projectile : MonoBehaviour
     public PlayerController player;
     public Collider col;
     private TrailRenderer trail;
-    private ISpellBehaviour spell;
+    public ISpellBehaviour spell;
     public LayerMask collisionLayers;
-    private int startLife = 100;
-    public int life;
+    public LayerMask enemyLayers;
+    public GameObject deathParticle;
+    private float startLife = 100;
+    public float life;
     void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<SphereCollider>();
@@ -25,12 +27,16 @@ public class Projectile : MonoBehaviour
         
     }
     void FixedUpdate(){
-        spell.Sustain(player,this);
-        life -= 1;
         if (life <= 0){
+            spell.End(player, this);
+            GameObject particle = Instantiate(deathParticle, transform.position, transform.rotation);
+            particle.GetComponent<Rigidbody>().velocity = rb.velocity;
+            particle.SetActive(true);
+            Destroy(particle,1);
             gameObject.SetActive(false);
             player.QueueInactive(this);
         }
+        spell.Sustain(player,this);
     }
     public void Spawn(Vector3 position, Quaternion rotation, int state){
         transform.position = position;
@@ -38,12 +44,14 @@ public class Projectile : MonoBehaviour
         trail.Clear();
         life = startLife;
         spell = player.GetSpell(state);
-        Debug.Log(transform.forward);
-        spell.Cast(player,this);
         gameObject.SetActive(true);
+        spell.Cast(player,this);
     }
     private void OnCollisionEnter(Collision other) {
         spell.Hit(player,this,other);
+        if(other.collider.CompareTag("Enemy")){
+            other.gameObject.GetComponent<IEnemy>().Hit();
+        }
     }
     public void SetState(int i){
         spell.SwitchOff(this);

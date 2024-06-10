@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class FireBall : ISpellBehaviour
 {
@@ -12,6 +13,7 @@ public class FireBall : ISpellBehaviour
    public void Sustain(PlayerController  player, Projectile proj){
         proj.transform.forward = proj.rb.velocity;
         proj.rb.velocity = proj.transform.forward * 10;
+        proj.life -= 1;
    }
    public void End(PlayerController  player, Projectile proj){
 
@@ -23,9 +25,6 @@ public class FireBall : ISpellBehaviour
         proj.rb.useGravity= false;
    }
    public void Hit(PlayerController  player, Projectile proj, Collision col){
-    proj.life -= 100;
-    if(col.gameObject.layer == 8){
-        Debug.Log("Hit!");
-    }
+    proj.life = 0;
     }
 }

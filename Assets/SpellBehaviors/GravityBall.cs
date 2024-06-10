@@ -11,6 +11,7 @@ public class GravityBall : ISpellBehaviour
    
    public void Sustain(PlayerController  player, Projectile proj){
         proj.transform.forward = proj.rb.velocity;
+        proj.life -= 0.1f;
    }
    public void End(PlayerController  player, Projectile proj){
 
@@ -22,7 +23,7 @@ public class GravityBall : ISpellBehaviour
      proj.rb.useGravity= false;
    }
    public void Hit(PlayerController  player, Projectile proj, Collision col){
-    proj.life -= 10;
+    proj.life -= 5 + proj.life/2;
     if(col.gameObject.layer == 8){
         Debug.Log("Hit!");
     }

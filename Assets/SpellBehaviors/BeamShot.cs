@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cinemachine.Utility;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class BeamShot : ISpellBehaviour
 {
@@ -11,21 +12,21 @@ public class BeamShot : ISpellBehaviour
     public void Cast(PlayerController  player, Projectile proj){
         proj.rb.useGravity = false;
         dir = proj.transform.TransformDirection(Vector3.forward);
-        Debug.LogWarning(dir);
    }
    
    public void Sustain(PlayerController  player, Projectile proj){
         RaycastHit hit;
         if(Physics.Raycast(proj.transform.position, dir, out hit, SPEED, proj.collisionLayers)){
-            Debug.Log("Hit!");
             proj.transform.position = hit.point;
         }
         else{
             proj.transform.position = proj.transform.position + dir * SPEED;
         }
+        proj.life -= 5;
    }
    public void End(PlayerController  player, Projectile proj){
-
+        proj.transform.forward = dir;
+        proj.rb.velocity = proj.transform.forward*SPEED;
    }
    public void SwitchTo(Projectile proj){
         proj.rb.useGravity = false;
@@ -35,12 +36,9 @@ public class BeamShot : ISpellBehaviour
    public void SwitchOff(Projectile proj){
         proj.rb.useGravity= false;
         proj.transform.forward = dir;
-        proj.rb.velocity = proj.transform.forward*SPEED;
+        proj.rb.velocity = proj.transform.forward*SPEED/Time.fixedDeltaTime;
    }
    public void Hit(PlayerController  player, Projectile proj, Collision col){
     proj.life = 0;
-    if(col.gameObject.layer == 8){
-        Debug.Log("Hit!");
-    }
     }
 }
