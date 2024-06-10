@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class FloatingSkull : MonoBehaviour, IEnemy
 {
-    private const float HOVER_HEIGHT = 1.5f;
-    private const float ROT_SPEED = 1f;
-    private const float SPEED = 20f;
+    private const float HOVER_HEIGHT = 1f;
+    private const float ROT_SPEED = 0.75f;
+    private const float SPEED = 10f;
     private Rigidbody rb;
     private float wobble;
     private Vector3 moveVec;
@@ -29,7 +29,7 @@ public class FloatingSkull : MonoBehaviour, IEnemy
         RaycastHit hit;
         if(Physics.Raycast(transform.position, Vector3.down, out hit, HOVER_HEIGHT, collisionLayers)){
             Debug.DrawRay(transform.position, Vector3.down*HOVER_HEIGHT, Color.red);
-            rb.AddForce(Vector3.up * HOVER_HEIGHT/(hit.distance+1) * 5);
+            rb.AddForce(Vector3.up * 10 * (1 - hit.distance/HOVER_HEIGHT));
         }
         rb.AddForce(Vector3.up * Mathf.Cos(wobble)*0.5f);
         moveVec = (GameController.GetPlayer().transform.position - transform.position).normalized;
