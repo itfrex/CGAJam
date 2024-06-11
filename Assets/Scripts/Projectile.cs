@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Projectile : MonoBehaviour
 {
 
+    public bool isNewClone = false;
     public Rigidbody rb;
     public PlayerController player;
     public Collider col;
@@ -13,6 +16,9 @@ public class Projectile : MonoBehaviour
     public LayerMask collisionLayers;
     public LayerMask enemyLayers;
     public GameObject deathParticle;
+    public GameObject target; //this is only here because i didnt realize Interfaces were not instanced
+    public NavMeshPath path;
+    public Vector3 dir;
     private float startLife = 100;
     public float life;
     void Awake() {
@@ -42,7 +48,7 @@ public class Projectile : MonoBehaviour
         transform.position = position;
         transform.rotation = rotation;
         trail.Clear();
-        life = startLife;
+        life = startLife*player.bulletDurationMult;
         spell = player.GetSpell(state);
         gameObject.SetActive(true);
         spell.Cast(player,this);
@@ -53,9 +59,26 @@ public class Projectile : MonoBehaviour
             other.gameObject.GetComponent<IEnemy>().Hit();
         }
     }
+    private void OnCollisionStay(Collision other) {
+        spell.Hit(player,this,other);
+        if(other.collider.CompareTag("Enemy")){
+            other.gameObject.GetComponent<IEnemy>().Hit();
+        }
+    }
     public void SetState(int i){
-        spell.SwitchOff(this);
+        if(gameObject.activeInHierarchy)spell.SwitchOff(this);
         spell = player.GetSpell(i);
-        spell.SwitchTo(this);
+        if(gameObject.activeInHierarchy)spell.SwitchTo(this);
+    }
+    public void DeepCopy(Projectile p){
+        rb.velocity = p.rb.velocity;
+        rb.angularVelocity = p.rb.angularVelocity;
+        transform.position = p.transform.position;
+        transform.rotation = p.transform.rotation;
+        life = p.life;
+        target = p.target;
+        dir = p.dir;
+        path = p.path;
+        isNewClone = true;
     }
 }

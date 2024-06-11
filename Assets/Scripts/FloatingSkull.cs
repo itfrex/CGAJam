@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,6 +14,7 @@ public class FloatingSkull : MonoBehaviour, IEnemy
     private const float ROT_SPEED = 0.75f;
     private const float SPEED = 10f;
     private Rigidbody rb;
+    private int id;
     private AudioSource audioSource;
     [SerializeField] private AudioClip[] deathSounds;
     [SerializeField] private GameObject deathParticles;
@@ -25,20 +27,24 @@ public class FloatingSkull : MonoBehaviour, IEnemy
     private Vector3 targetPos;
     private Coroutine searchRoutine;
     [SerializeField] private LayerMask collisionLayers;
-    public bool Spawn(){
+    public bool Spawn(int id){
+        this.id = id;
         return true;
     }
     public bool Hit(){
+        return Kill();  
+    }
+    public bool Kill(){
         AudioSource.PlayClipAtPoint(deathSounds[Random.Range(0, deathSounds.Length)], transform.position);
         Destroy(Instantiate(deathParticles, transform.position, transform.rotation), 5);
         StopCoroutine(searchRoutine);
-        Destroy(gameObject);        
+        GameController.Instance.RemoveEnemy(id);
+        Destroy(gameObject);
         return true;
     }
-    public bool Destroy(){
-        return true;
+    public void SetId(int id){
+        this.id = id;
     }
-
     void Start() {
         rb = GetComponent<Rigidbody>();   
         audioSource = GetComponent<AudioSource>();
@@ -53,7 +59,7 @@ public class FloatingSkull : MonoBehaviour, IEnemy
             rb.AddForce(Vector3.up * 10 * (1 - hit.distance/HOVER_HEIGHT));
         }
         rb.AddForce(Vector3.up * Mathf.Cos(wobble)*0.5f);
-        if (path.corners.Length > 2){
+        if (path.corners.Length > 2 && Physics.Linecast(transform.position, GameController.GetPlayer().transform.position, collisionLayers)){
             targetPos = path.corners[1];
             targetPos.y += HOVER_HEIGHT;
         }else{

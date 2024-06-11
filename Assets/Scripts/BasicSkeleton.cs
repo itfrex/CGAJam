@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,6 +8,7 @@ public class BasicSkeleton : MonoBehaviour, IEnemy
 {
     private const float WAIT_FACTOR = 0.1f;
     private const float SEARCH_DELAY = 1;
+    private int id;
     private NavMeshAgent agent;
     private NavMeshPath path;
     private Coroutine searchRoutine;
@@ -20,18 +22,24 @@ public class BasicSkeleton : MonoBehaviour, IEnemy
         searchRoutine = StartCoroutine(CalculatePath(GameController.GetPlayer().gameObject));
     }
 
-    public bool Spawn(){
+    public bool Spawn(int id){
+        this.id = id;
         return true;
     }
-    public bool Destroy(){
-        return true;
-    }
-    public bool Hit(){
+    public bool Kill(){
         AudioSource.PlayClipAtPoint(deathSounds[Random.Range(0, deathSounds.Length)], transform.position);
         Destroy(Instantiate(deathParticles, transform.position, transform.rotation), 5);
         StopCoroutine(searchRoutine);
+        GameController.Instance.RemoveEnemy(id);
         Destroy(gameObject);
         return true;
+    }
+    public bool Hit(){
+        return Kill();
+    }
+    
+    public void SetId(int id){
+        this.id = id;
     }
 
     IEnumerator CalculatePath(GameObject obj){

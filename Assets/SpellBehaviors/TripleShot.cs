@@ -5,6 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 public class TripleShot : ISpellBehaviour
 {public void Cast(PlayerController  player, Projectile proj){
+          proj.player.SetCooldown(1);
         proj.rb.velocity = proj.transform.TransformDirection(Vector3.forward*20);
         proj.rb.useGravity = true;
         Projectile[] copies = proj.player.DuplicateSpell(proj,2);

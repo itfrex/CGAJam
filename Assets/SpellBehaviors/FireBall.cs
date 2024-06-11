@@ -6,6 +6,7 @@ using UnityEngine.Rendering.Universal;
 public class FireBall : ISpellBehaviour
 {
     public void Cast(PlayerController  player, Projectile proj){
+     proj.player.SetCooldown(0.3f);
         proj.rb.useGravity = false;
         proj.rb.velocity = proj.transform.TransformDirection(Vector3.forward);
    }
@@ -23,8 +24,9 @@ public class FireBall : ISpellBehaviour
    }
    public void SwitchOff(Projectile proj){
         proj.rb.useGravity= false;
+        proj.transform.forward = proj.rb.velocity;
    }
    public void Hit(PlayerController  player, Projectile proj, Collision col){
-    proj.life = 0;
+    proj.life -= 100;
     }
 }

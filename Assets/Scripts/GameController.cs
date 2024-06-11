@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Unity.VisualScripting;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.AI;
@@ -18,21 +20,28 @@ public class GameController : MonoBehaviour
     private static PlayerController player;
     public bool doSpawning;
     public GameObject[] enemies;
+    public GameObject[] aliveEnemies;
+    private int enemyCount;
+    private int enemyCap = 100;
 
     private void Awake() {
         DontDestroyOnLoad(gameObject);
         player = GameObject.FindObjectOfType<PlayerController>();
+        aliveEnemies = new GameObject[enemyCap];
         StartCoroutine(SpawnLoop());
     }
     public static PlayerController GetPlayer(){
         return player;
     }
     private IEnumerator SpawnLoop(){
-        while(doSpawning){
+        while(doSpawning && enemyCount < enemyCap){
             Vector3 point;
             if(RandomPoint(player.transform.position, 30, out point)){
-                IEnemy enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], point, Quaternion.identity).GetComponent<IEnemy>();
-                enemy.Spawn();
+                yield return new WaitForEndOfFrame();
+                GameObject enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], point, Quaternion.identity);
+                enemy.GetComponent<IEnemy>().Spawn(enemyCount);
+                aliveEnemies[enemyCount] = enemy;
+                enemyCount++;
                 yield return new WaitForSeconds(1);
             }
         }
@@ -60,5 +69,24 @@ public class GameController : MonoBehaviour
         }
         result = Vector3.zero;
         return false;
+    }
+    public void RemoveEnemy(int id){
+        aliveEnemies[id] = aliveEnemies[enemyCount-1];
+        aliveEnemies[id].GetComponent<IEnemy>().SetId(id);
+        enemyCount--;
+    }
+    public GameObject GetRandomEnemy(){
+        return aliveEnemies[Random.Range(0, enemyCount)];
+    }
+    public GameObject GetNearestEnemy(Vector3 point){
+        float best = Mathf.Infinity;
+        int bestIndex = 0;
+        for (int i = 0; i < enemyCount; i++){
+            if(best > Vector3.Distance(point, aliveEnemies[i].transform.position)){
+                best = Vector3.Distance(point, aliveEnemies[i].transform.position);
+                bestIndex = i;
+            }
+        }
+        return aliveEnemies[bestIndex];
     }
 }

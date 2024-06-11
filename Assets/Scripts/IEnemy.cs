@@ -4,7 +4,8 @@ using UnityEngine;
 
 public interface IEnemy
 {
-    public bool Spawn();
+    public bool Spawn(int id);
     public bool Hit();
-    public bool Destroy();
+    public bool Kill();
+    public void SetId(int id);
 }

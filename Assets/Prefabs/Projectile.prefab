@@ -173,12 +173,13 @@ MonoBehaviour:
   col: {fileID: 0}
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 512
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   deathParticle: {fileID: 1878242539266247554, guid: 6df2ab7e979acdf4a905d9cb74bb916b,
     type: 3}
+  target: {fileID: 0}
   life: 0
 --- !u!54 &1093652505940347607
 Rigidbody:

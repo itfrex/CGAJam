@@ -40,6 +40,11 @@ public class PlayerController : MonoBehaviour
     public LayerMask jumpLayers;
     public Vector3 aimDir;
 
+    private float cooldown;
+    public float firerateMult;
+    public float bulletDurationMult;
+    public float chaosMult = 1;
+    private float timer;
     
     [SerializeField] private AudioClip[] magicSounds;
     
@@ -84,20 +89,20 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump")){
             jumpBuffer = 3;
         }
-        if (Input.GetButtonDown("Fire1")){
-            CastWand();
+        if (Input.GetButton("Fire1")){
+            if(cooldown <= 0){
+                CastWand();
+            }
         }
         if(Input.GetButtonDown("Fire2")){
-            magicIndex = (magicIndex+1)%magicColors.Length;
-            foreach(Projectile p in projectiles){
-                p.SetState(magicIndex);
-            }
-            while (clonedProjectiles.Count > 0){
-                projectiles.Add(clonedProjectiles.Dequeue());
-            }
-            Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
-            cursor.color = magicColors[magicIndex];
+            BumpMagic();
         }
+        timer += Time.deltaTime*chaosMult;
+        if(timer >= 1){
+            BumpMagic();
+            timer = 0;
+        }
+        if (cooldown>0) cooldown -= Time.deltaTime*firerateMult;
     }
     void FixedUpdate() {
         movement.y = rb.velocity.y;
@@ -132,26 +137,49 @@ public class PlayerController : MonoBehaviour
     public Projectile[] DuplicateSpell(Projectile original, int count){
         Projectile[] clones = new Projectile[count];
         for(int i = 0; i < count; i++){
-            clones[i] = Instantiate(original).GetComponent<Projectile>();
-            clones[i].player=this;
-            clones[i].spell=spells[magicIndex].Value;
-            clones[i].rb.velocity=original.rb.velocity;
-            //need a seperate queue so we do not mess with enumeration during switching
-            clonedProjectiles.Enqueue(clones[i]);
+            if(pInactive.Count > 0){
+                clones[i] = pInactive.Dequeue();
+                clones[i].DeepCopy(original);
+                clones[i].gameObject.SetActive(true);
+            }
+            else{
+                clones[i] = Instantiate(original).GetComponent<Projectile>();
+                clones[i].player=this;
+                clones[i].spell=spells[magicIndex].Value;
+                clones[i].rb.velocity=original.rb.velocity;
+                //need a seperate queue so we do not mess with enumeration during switching
+                clonedProjectiles.Enqueue(clones[i]);
+            }
         }
         return clones;
     }
 
     public void QueueInactive(Projectile p){
-        if(projectiles.Count < 100){
+        if(projectiles.Count < 1000){
             pInactive.Enqueue(p);
         }else{
             projectiles.Remove(p);
             Destroy(p);
+            Debug.Log(projectiles.Count);
         }
     }
 
     public ISpellBehaviour GetSpell(int i){
         return spells[i].Value;
+    }
+    public void SetCooldown(float amt){
+        cooldown = amt;
+    }
+    public void BumpMagic(){
+        magicIndex = (magicIndex+1)%magicColors.Length;
+            foreach(Projectile p in projectiles){
+                if(!p.isNewClone)p.SetState(magicIndex);
+                else p.isNewClone = false;
+            }
+            while (clonedProjectiles.Count > 0){
+                projectiles.Add(clonedProjectiles.Dequeue());
+            }
+            Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
+            cursor.color = magicColors[magicIndex];
     }
 }

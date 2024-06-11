@@ -1484,15 +1484,7 @@ MonoBehaviour:
   - mode: 1
     unityReference: {fileID: 0}
     rawReference:
-      rid: 6536932152692441104
-  - mode: 1
-    unityReference: {fileID: 0}
-    rawReference:
       rid: 6536932152692441097
-  - mode: 1
-    unityReference: {fileID: 0}
-    rawReference:
-      rid: 6536932152692441101
   - mode: 1
     unityReference: {fileID: 0}
     rawReference:
@@ -1500,7 +1492,15 @@ MonoBehaviour:
   - mode: 1
     unityReference: {fileID: 0}
     rawReference:
-      rid: 6536932152692441093
+      rid: 6536932152692441101
+  - mode: 1
+    unityReference: {fileID: 0}
+    rawReference:
+      rid: 6536932209387372546
+  - mode: 1
+    unityReference: {fileID: 0}
+    rawReference:
+      rid: 6536932152692441104
   - mode: 1
     unityReference: {fileID: 0}
     rawReference:
@@ -1520,6 +1520,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   aimDir: {x: 0, y: 0, z: 0}
+  firerateMult: 4
+  bulletDurationMult: 4
+  chaosMult: 1
   magicSounds:
   - {fileID: 8300000, guid: dcbc89f0d94650a43bd16d9e31eb8493, type: 3}
   - {fileID: 8300000, guid: ff661c2723b19b54182942abc5037763, type: 3}
@@ -1528,9 +1531,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6536932152692441093
-      type: {class: GravityBall, ns: , asm: Assembly-CSharp}
-      data: 
     - rid: 6536932152692441095
       type: {class: GravityBall, ns: , asm: Assembly-CSharp}
       data: 
@@ -1551,6 +1551,9 @@ MonoBehaviour:
       data: 
     - rid: 6536932209387372544
       type: {class: TripleShot, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932209387372546
+      type: {class: HomingShot, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!136 &658103567
 CapsuleCollider:
@@ -2202,6 +2205,7 @@ MonoBehaviour:
   enemies:
   - {fileID: 7503935359360772856, guid: d2042c966e0538544886faec1a7fb447, type: 3}
   - {fileID: 3262389611264880215, guid: 320ef7e2128ddad41833231543bd9e04, type: 3}
+  aliveEnemies: []
 --- !u!4 &929209605
 Transform:
   m_ObjectHideFlags: 0

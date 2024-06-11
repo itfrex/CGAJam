@@ -5,6 +5,7 @@ using UnityEngine;
 public class GravityBall : ISpellBehaviour
 {
    public void Cast(PlayerController  player, Projectile proj){
+     proj.player.SetCooldown(0.4f);
         proj.rb.velocity = proj.transform.TransformDirection(Vector3.forward*15);
         proj.rb.useGravity = true;
    }
