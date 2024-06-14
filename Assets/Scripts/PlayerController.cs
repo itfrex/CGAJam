@@ -59,8 +59,8 @@ public class PlayerController : MonoBehaviour
     public AnimationCurve vignetteCurve;
     public AudioLowPassFilter audioFilter;
     [SerializeField] AudioClip[] hurtSFX;
-    private const float VIGNETTE_STRENGTH = 0.3f;
-    private const float HEAL_TIME = 3f;
+    private const float VIGNETTE_STRENGTH = 0.4f;
+    private const float HEAL_TIME = 5f;
     private const float INVULN_TIME = 1f;
     private const float MIN_FREQ_CUTOFF = 1000;
     private const float MAX_FREQ_CUTOFF = 22000-MIN_FREQ_CUTOFF;

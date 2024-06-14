@@ -15,7 +15,7 @@ public class FireBall : ISpellBehaviour
    
    public void Sustain(PlayerController  player, Projectile proj){
         proj.transform.forward = proj.rb.velocity;
-        proj.rb.velocity = proj.transform.forward * 15;
+        proj.rb.velocity = proj.transform.forward * 20;
         proj.life -= 1;
    }
    public void End(PlayerController  player, Projectile proj){

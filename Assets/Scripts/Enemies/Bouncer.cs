@@ -63,7 +63,7 @@ public class Bouncer : MonoBehaviour, IEnemy
         }
         else{
             if(jump_timer > 0) {
-                    jump_timer -= Time.deltaTime;
+                    jump_timer -= Time.fixedDeltaTime;
             }
             else{
                 if (path.corners.Length > 2 && Physics.Linecast(transform.position, GameController.Instance.GetPlayer().transform.position, collisionLayers)){
@@ -81,7 +81,7 @@ public class Bouncer : MonoBehaviour, IEnemy
                         rb.velocity = FindLaunchAngle(transform.position, targetPos, targetVel);
                     }
                 }
-                
+                AudioSource.PlayClipAtPoint(livingSounds[Random.Range(0, livingSounds.Length)], transform.position);
             }
         }
     }
@@ -110,7 +110,7 @@ public class Bouncer : MonoBehaviour, IEnemy
     private Vector3 FindLaunchAngle(Vector3 from, Vector3 to, Vector3 targetVel){
         //prediction
         float horizDelta = Vector3.Distance(from-from.y*Vector3.up,to-to.y*Vector3.up);
-        float t = horizDelta/SPEED;
+        float t = Mathf.Min(horizDelta/SPEED,2);
         Vector3 targetOffset = targetVel * t;
         to += targetOffset;
         //jump

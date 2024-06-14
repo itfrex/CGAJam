@@ -152,7 +152,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 46d96dec77ac5b74fbea0b6eab10d7f1, type: 3}
   deathParticles: {fileID: 3807220259697995467, guid: 83377dd0fdc901a4da0ec2193794d707,
     type: 3}
-  livingSounds: []
+  livingSounds:
+  - {fileID: 8300000, guid: 58337dadfaa54a649ac53827e6f1fce4, type: 3}
   collisionLayers:
     serializedVersion: 2
     m_Bits: 512
