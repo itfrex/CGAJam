@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2e2e32529244f4cbb582ce9e38f2b4, type: 3}
+  m_Name: ScopedWand
+  m_EditorClassIdentifier: 
+  fullName: Scoped Wand
+  description: Massive increase in accuracy, increase in spell duration, and slight
+    decrease in firerate.
+  image: {fileID: 0}
+  stackable: 0
+  effects:
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797650
+    amt: 0.2
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797651
+    amt: 0.85
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797652
+    amt: 1.5
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797654
+    amt: 1.5
+  references:
+    version: 2
+    RefIds:
+    - rid: 6536932297225797650
+      type: {class: AccuracyMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932297225797651
+      type: {class: FireRateMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932297225797652
+      type: {class: SpellLifeMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932297225797654
+      type: {class: KnockbackMult, ns: , asm: Assembly-CSharp}
+      data: 

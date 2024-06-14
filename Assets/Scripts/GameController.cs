@@ -5,38 +5,54 @@ using Unity.VisualScripting;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
     private static GameController _instance;
     public static GameController Instance{
         get{
-            if(_instance == null){
-                _instance = GameObject.FindObjectOfType<GameController>();
-            }
             return _instance;
         }
     }
-    private static PlayerController player;
+    private PlayerController player;
     public bool doSpawning;
     public GameObject[] enemies;
     public GameObject[] aliveEnemies;
     private int enemyCount;
     private int enemyCap = 100;
+    public int crystalCount;
+    public List<Artifact> artifacts;
+    private Coroutine enemySpawnRoutine;
+    private float enemySpawnTime = 1f;
 
     private void Awake() {
+            if(_instance != null && _instance != this){
+                Destroy(this.gameObject);
+            }else{
+                _instance = this;
+            }
         DontDestroyOnLoad(gameObject);
+        
+    }
+    public void StartLevel(){
         player = GameObject.FindObjectOfType<PlayerController>();
         aliveEnemies = new GameObject[enemyCap];
-        StartCoroutine(SpawnLoop());
+        enemyCount = 0;
+        enemySpawnRoutine = StartCoroutine(SpawnLoop());
+        foreach (Artifact a in artifacts){
+            foreach (Artifact.Effect e in a.effects){
+                e.effect.Value.ApplyEffect(e.amt);
+            }
+        }
     }
-    public static PlayerController GetPlayer(){
+    public PlayerController GetPlayer(){
         return player;
     }
     private IEnumerator SpawnLoop(){
-        while(doSpawning && enemyCount < enemyCap){
+        while(doSpawning){
             Vector3 point;
-            if(RandomPoint(player.transform.position, 30, out point)){
+            if(enemyCount < enemyCap && RandomPoint(player.transform.position, 30, out point)){
                 yield return new WaitForEndOfFrame();
                 GameObject enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], point, Quaternion.identity);
                 enemy.GetComponent<IEnemy>().Spawn(enemyCount);
@@ -44,6 +60,7 @@ public class GameController : MonoBehaviour
                 enemyCount++;
                 yield return new WaitForSeconds(1);
             }
+            yield return new WaitForSeconds(1);
         }
     }
 
@@ -62,8 +79,9 @@ public class GameController : MonoBehaviour
             }
             else{
                 range *= 0.9f;
-                if (range < 10){
-                    break;
+                if (range < 10){ 
+                    result = Vector3.zero;
+                    return false;
                 }
             }
         }
@@ -71,9 +89,12 @@ public class GameController : MonoBehaviour
         return false;
     }
     public void RemoveEnemy(int id){
-        aliveEnemies[id] = aliveEnemies[enemyCount-1];
-        aliveEnemies[id].GetComponent<IEnemy>().SetId(id);
-        enemyCount--;
+        if(id >= 0){
+            aliveEnemies[id].GetComponent<IEnemy>().SetId(-1);
+            aliveEnemies[id] = aliveEnemies[enemyCount-1];
+            aliveEnemies[id].GetComponent<IEnemy>().SetId(id);
+            enemyCount--;
+        }
     }
     public GameObject GetRandomEnemy(){
         return aliveEnemies[Random.Range(0, enemyCount)];
@@ -82,11 +103,18 @@ public class GameController : MonoBehaviour
         float best = Mathf.Infinity;
         int bestIndex = 0;
         for (int i = 0; i < enemyCount; i++){
-            if(best > Vector3.Distance(point, aliveEnemies[i].transform.position)){
-                best = Vector3.Distance(point, aliveEnemies[i].transform.position);
+            float dist = Vector3.Distance(point, aliveEnemies[i].transform.position);
+            if(best > dist){
+                best = dist;
                 bestIndex = i;
             }
         }
         return aliveEnemies[bestIndex];
+    }
+    public void Win(){
+        Debug.Log("YOU WIN");
+        StopAllCoroutines();
+        UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+        SceneManager.LoadScene(1);
     }
 }

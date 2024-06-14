@@ -6,21 +6,24 @@ using TNRD;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private const int PROJECTILE_CAP = 3000;
     public Transform cam;
     public Graphic cursor;
-    private Rigidbody rb;
+    public Rigidbody rb;
     private float yaw;
     private float pitch;
     public float sensitivity = 1;
-    public float speed = 1;
     public float jumpStrength = 1;
     private Vector3 movement;
+    private Vector3 kickback;
     private float pitchUpper = 90;
     private float pitchLower = -90;
     private int jumpBuffer = 0;
@@ -41,15 +44,32 @@ public class PlayerController : MonoBehaviour
     public Vector3 aimDir;
 
     private float cooldown;
-    public float firerateMult;
-    public float bulletDurationMult;
+    public float speed = 1;
+    public float firerateMult = 1;
+    public float bulletDurationMult = 1;
     public float chaosMult = 1;
+    public float knockbackMult = 1;
+    public float accuracyMult = 1;
     private float timer;
+    public bool randomizeSpellOrder = false;
+
+    private float hurtTimer;
+    public Volume renderingVolume;
+    private Vignette vignette;
+    public AnimationCurve vignetteCurve;
+    public AudioLowPassFilter audioFilter;
+    [SerializeField] AudioClip[] hurtSFX;
+    private const float VIGNETTE_STRENGTH = 0.3f;
+    private const float HEAL_TIME = 3f;
+    private const float INVULN_TIME = 1f;
+    private const float MIN_FREQ_CUTOFF = 1000;
+    private const float MAX_FREQ_CUTOFF = 22000-MIN_FREQ_CUTOFF;
     
     [SerializeField] private AudioClip[] magicSounds;
     
     void Start()
     {
+        GameController.Instance.StartLevel();
         if(magicColors.Length != spells.Length){
             Debug.LogWarning("Color array not the same size as magic array! Will cause errors!");
         }
@@ -61,6 +81,9 @@ public class PlayerController : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
         cursor.color = magicColors[magicIndex];
+        kickback = Vector3.zero;
+        renderingVolume.profile.TryGet(out vignette);
+        vignette.intensity.value = 0;
     }
 
     // Update is called once per frame
@@ -72,12 +95,12 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, aimLayers)){
-            aimDir = (hit.point-projSpawn.position).normalized;
+            aimDir = (hit.point-projSpawn.position).normalized.normalized;
             Debug.DrawLine(cam.position, hit.point);
             aimPoint = hit.point;
         }
         else{
-            aimDir = (cam.transform.position + cam.transform.forward*100-projSpawn.position).normalized;
+            aimDir = (cam.transform.position + cam.transform.forward*100-projSpawn.position).normalized.normalized;
         }
             Debug.DrawRay(projSpawn.position, aimDir*100, Color.green);
 
@@ -97,29 +120,42 @@ public class PlayerController : MonoBehaviour
         if(Input.GetButtonDown("Fire2")){
             BumpMagic();
         }
+        if(Input.GetKeyDown("k")){
+            Hurt();
+        }
         timer += Time.deltaTime*chaosMult;
         if(timer >= 1){
             BumpMagic();
             timer = 0;
         }
         if (cooldown>0) cooldown -= Time.deltaTime*firerateMult;
+        
+        if(hurtTimer > 0){
+            hurtTimer = Mathf.Max(0, hurtTimer - Time.deltaTime);
+            vignette.intensity.value = VIGNETTE_STRENGTH*vignetteCurve.Evaluate(hurtTimer/HEAL_TIME);
+            audioFilter.cutoffFrequency = MIN_FREQ_CUTOFF + MAX_FREQ_CUTOFF*(1-vignetteCurve.Evaluate(hurtTimer/HEAL_TIME));
+        }
     }
     void FixedUpdate() {
         movement.y = rb.velocity.y;
-        rb.velocity = transform.TransformDirection(movement);
+        rb.velocity = transform.TransformDirection(movement) + kickback;
         if(jumpBuffer > 0 && isGrounded){
             rb.velocity += Vector3.up * jumpStrength;
             jumpBuffer = 0;
             isGrounded = false;
         }
         jumpBuffer = jumpBuffer > 0 ? 0 : jumpBuffer - 1;
+        kickback *= 0.9f;
+        if (kickback.magnitude < 0.1f){
+            kickback = Vector3.zero;
+        }
     }
     void OnCollisionEnter(Collision other) {
         if (jumpLayers == (jumpLayers | (1<< other.gameObject.layer))){
             isGrounded = true;
         }
     }
-    private bool CastWand(){
+    private void CastWand(){
         Projectile p;
         AudioSource.PlayClipAtPoint(magicSounds[Random.Range(0, magicSounds.Length)], transform.position, 0.1f);
         if(pInactive.Count > 0){
@@ -131,7 +167,6 @@ public class PlayerController : MonoBehaviour
             projectiles.Add(p);
         }
         p.Spawn(projSpawn.position, Quaternion.LookRotation(aimDir, projSpawn.transform.up), magicIndex);
-        return true;
     }
 
     public Projectile[] DuplicateSpell(Projectile original, int count){
@@ -142,7 +177,7 @@ public class PlayerController : MonoBehaviour
                 clones[i].DeepCopy(original);
                 clones[i].gameObject.SetActive(true);
             }
-            else{
+            else if(projectiles.Count+clonedProjectiles.Count < PROJECTILE_CAP){
                 clones[i] = Instantiate(original).GetComponent<Projectile>();
                 clones[i].player=this;
                 clones[i].spell=spells[magicIndex].Value;
@@ -160,7 +195,6 @@ public class PlayerController : MonoBehaviour
         }else{
             projectiles.Remove(p);
             Destroy(p);
-            Debug.Log(projectiles.Count);
         }
     }
 
@@ -171,7 +205,8 @@ public class PlayerController : MonoBehaviour
         cooldown = amt;
     }
     public void BumpMagic(){
-        magicIndex = (magicIndex+1)%magicColors.Length;
+        if(randomizeSpellOrder) magicIndex = Random.Range(0,magicColors.Length);
+        else magicIndex = (magicIndex+1)%magicColors.Length;
             foreach(Projectile p in projectiles){
                 if(!p.isNewClone)p.SetState(magicIndex);
                 else p.isNewClone = false;
@@ -181,5 +216,19 @@ public class PlayerController : MonoBehaviour
             }
             Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
             cursor.color = magicColors[magicIndex];
+    }
+    public void ApplyKickback(float amt){
+        kickback -= cam.transform.forward * amt * knockbackMult;
+        rb.velocity += Vector3.up*kickback.y;
+        kickback.y = 0;
+    }
+    public void Hurt(){
+        if(hurtTimer > 0 && HEAL_TIME-hurtTimer < INVULN_TIME){
+            Debug.Log("YOU LOSE");
+            }else if (hurtTimer <= 0){
+            audioFilter.cutoffFrequency = MIN_FREQ_CUTOFF;
+            AudioSource.PlayClipAtPoint(hurtSFX[Random.Range(0, hurtSFX.Length)], transform.position);
+            hurtTimer = HEAL_TIME;
+        }
     }
 }

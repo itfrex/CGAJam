@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2e2e32529244f4cbb582ce9e38f2b4, type: 3}
+  m_Name: StrategyGuide
+  m_EditorClassIdentifier: 
+  fullName: Strategy Guide
+  description: Decreases firerate, greatly increases speed and spell duration.
+  image: {fileID: 0}
+  stackable: 0
+  effects:
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797662
+    amt: 0.75
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797663
+    amt: 0.8
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797664
+    amt: 2
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797666
+    amt: 0.75
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932297225797668
+    amt: 3
+  references:
+    version: 2
+    RefIds:
+    - rid: 6536932297225797662
+      type: {class: FireRateMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932297225797663
+      type: {class: KnockbackMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932297225797664
+      type: {class: SpeedMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932297225797666
+      type: {class: AccuracyMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932297225797668
+      type: {class: SpellLifeMult, ns: , asm: Assembly-CSharp}
+      data: 

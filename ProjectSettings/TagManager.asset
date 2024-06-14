@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Jumpable
   - Projectile
+  - Enemy
+  - Goal
   layers:
   - Default
   - TransparentFX
