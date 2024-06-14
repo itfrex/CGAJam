@@ -48,9 +48,7 @@ MonoBehaviour:
   enemies:
   - {fileID: 7503935359360772856, guid: d2042c966e0538544886faec1a7fb447, type: 3}
   - {fileID: 3262389611264880215, guid: 320ef7e2128ddad41833231543bd9e04, type: 3}
+  - {fileID: 5514308601842121376, guid: 0f272124fe93eec498a01bb4cce5c131, type: 3}
   aliveEnemies: []
   crystalCount: 0
-  artifacts:
-  - {fileID: 11400000, guid: 9156cf51a02d09f4f9ed7e9deb5d84a1, type: 2}
-  - {fileID: 11400000, guid: 8c54ad55a65fefa45ae8a52021c91f49, type: 2}
-  - {fileID: 11400000, guid: b36bdacbace5c1842a4f886ae34f9ee4, type: 2}
+  artifacts: []
