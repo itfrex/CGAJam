@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullName: Chaos Magick
   description: Randomize spell order and embrace chaos.
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: cd789ac98d48c5b42adcf49e18b89928, type: 3}
   stackable: 0
   effects:
   - effect:
