@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -69,7 +70,6 @@ public class PlayerController : MonoBehaviour
     
     void Start()
     {
-        GameController.Instance.StartLevel();
         if(magicColors.Length != spells.Length){
             Debug.LogWarning("Color array not the same size as magic array! Will cause errors!");
         }
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         pInactive = new Queue<Projectile>();
         clonedProjectiles = new Queue<Projectile>();
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
+        GameController.Instance.SwapColor("_Magic", magicColors[magicIndex]);
         cursor.color = magicColors[magicIndex];
         kickback = Vector3.zero;
         renderingVolume.profile.TryGet(out vignette);
@@ -214,7 +214,7 @@ public class PlayerController : MonoBehaviour
             while (clonedProjectiles.Count > 0){
                 projectiles.Add(clonedProjectiles.Dequeue());
             }
-            Shader.SetGlobalColor("_MagicColor", magicColors[magicIndex]);
+        GameController.Instance.SwapColor("_Magic", magicColors[magicIndex]);
             cursor.color = magicColors[magicIndex];
     }
     public void ApplyKickback(float amt){
@@ -223,9 +223,9 @@ public class PlayerController : MonoBehaviour
         kickback.y = 0;
     }
     public void Hurt(){
-        if(hurtTimer > 0 && HEAL_TIME-hurtTimer < INVULN_TIME){
-            Debug.Log("YOU LOSE");
-            }else if (hurtTimer <= 0){
+        if(hurtTimer > 0 && HEAL_TIME-hurtTimer > INVULN_TIME){
+            GameController.Instance.Lose();
+        }else if (hurtTimer <= 0){
             audioFilter.cutoffFrequency = MIN_FREQ_CUTOFF;
             AudioSource.PlayClipAtPoint(hurtSFX[Random.Range(0, hurtSFX.Length)], transform.position);
             hurtTimer = HEAL_TIME;

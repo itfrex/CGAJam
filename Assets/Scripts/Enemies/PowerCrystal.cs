@@ -26,7 +26,7 @@ public class PowerCrystal : MonoBehaviour, IEnemy
         Destroy(Instantiate(breakParticles, transform.position, transform.rotation), 5);
         GameController.Instance.crystalCount--;
         if(GameController.Instance.crystalCount <= 0){
-            GameController.Instance.Win();
+            GameController.Instance.WinStage();
         }
         Destroy(gameObject);
         return true;

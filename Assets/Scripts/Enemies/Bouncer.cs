@@ -70,7 +70,6 @@ public class Bouncer : MonoBehaviour, IEnemy
                     targetPos = path.corners[1];
                     targetVel = Vector3.zero;
                     rb.velocity = FindLaunchAngle(transform.position, targetPos, targetVel);
-                    Debug.Log(targetPos);
                 }else{
                     targetPos = GameController.Instance.GetPlayer().transform.position;
                     targetVel = GameController.Instance.GetPlayer().rb.velocity;
@@ -97,7 +96,6 @@ public class Bouncer : MonoBehaviour, IEnemy
             if(NavMesh.SamplePosition(transform.position, out hit, 10, areaMask)){
                 if(NavMesh.CalculatePath(hit.position, obj.transform.position, areaMask, path)){
                     yield return new WaitForSeconds(0.1f + Vector3.Distance(obj.transform.position, transform.position)*WAIT_FACTOR);
-                    Debug.Log("FOUND PATH");
                 }
                 else{
                     yield return new WaitForSeconds(SEARCH_DELAY);

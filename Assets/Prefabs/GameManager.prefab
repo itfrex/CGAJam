@@ -44,6 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75017e6dd1596364f8ec1ddbfcc80eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deathEffect: {fileID: 1870550747374699313, guid: c40be3174f62c4acf8c1216858c64956,
+    type: 2}
+  blackFadeEffect: {fileID: -8732351074772761467, guid: c40be3174f62c4acf8c1216858c64956,
+    type: 2}
+  quantizerEffect: {fileID: 2870623834566374077, guid: c40be3174f62c4acf8c1216858c64956,
+    type: 2}
+  paletteSwapEffect: {fileID: -1557762325961216637, guid: c40be3174f62c4acf8c1216858c64956,
+    type: 2}
   doSpawning: 1
   enemies:
   - {fileID: 7503935359360772856, guid: d2042c966e0538544886faec1a7fb447, type: 3}

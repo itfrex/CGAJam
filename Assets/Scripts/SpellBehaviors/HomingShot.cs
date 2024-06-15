@@ -12,7 +12,6 @@ public class HomingShot : ISpellBehaviour
     private const float SEARCH_DELAY = 0.5f;
     private const float HOVER_HEIGHT = 1f;
     private const float ROT_SPEED = 5f;
-     float searchCooldown;
      int navMask;
     public void Cast(PlayerController  player, Projectile proj){
      proj.player.SetCooldown(0.6f);
@@ -29,10 +28,10 @@ public class HomingShot : ISpellBehaviour
      }
      if(proj.target != null){
           Vector3 targetPos;
-          if(searchCooldown > 0){
-               searchCooldown -= Time.fixedDeltaTime;
+          if(proj.searchCooldown > 0){
+               proj.searchCooldown -= Time.fixedDeltaTime;
           }else{
-               searchCooldown = CalculatePath(proj.transform.position, proj.target.transform.position, proj.path);
+               proj.searchCooldown = CalculatePath(proj.transform.position, proj.target.transform.position, proj.path);
           }
           if (proj.path.corners.Length > 2 && Physics.Linecast(proj.transform.position, proj.target.transform.position, proj.collisionLayers)){
             targetPos = proj.path.corners[1];
@@ -51,7 +50,7 @@ public class HomingShot : ISpellBehaviour
      else Debug.Log("NO TARGET!");
      
           proj.rb.velocity *= 0.95f;
-          proj.rb.angularVelocity *= 0.8f;
+          proj.rb.angularVelocity *= 0.9f;
         proj.rb.AddForce(proj.transform.forward*25);
         //proj.rb.angularVelocity = Vector3.zero;
         RaycastHit hit;
@@ -92,10 +91,7 @@ public class HomingShot : ISpellBehaviour
     void InitHoming(Projectile proj){
           navMask = NavMesh.GetAreaFromName("Flying");
           proj.path = new NavMeshPath();
-          proj.target = GameController.Instance.GetNearestEnemy(proj.transform.position);
-     if(proj.target != null){
-          searchCooldown = CalculatePath(proj.transform.position, proj.target.transform.position, proj.path);
-          }
+          proj.searchCooldown = 0;
     }
 
     float CalculatePath(Vector3 from, Vector3 to, NavMeshPath path){

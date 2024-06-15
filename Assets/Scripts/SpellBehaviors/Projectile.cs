@@ -19,6 +19,7 @@ public class Projectile : MonoBehaviour
     public GameObject target; //this is only here because i didnt realize Interfaces were not instanced
     public NavMeshPath path;
     public Vector3 dir;
+    public float searchCooldown = -1;
     private float startLife = 100;
     public float life;
     void Awake() {
