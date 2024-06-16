@@ -208,9 +208,11 @@ public class GameController : MonoBehaviour
     private void StateOpener(Scene scene, LoadSceneMode mode){
         if(scene.buildIndex == 0){
             AudioManager.instance.PlayDelayed("MenuIntro", 0.5f);
+            SetDitherEffect(true);
             audioSource.clip = AudioManager.instance.GetClip("Menu");
             audioSource.PlayScheduled(0.5f + AudioManager.instance.GetLength("MenuIntro"));
         }else if(stageOrder.Contains(scene.buildIndex)){
+            SetDitherEffect(true);
             StartLevel();
         }else if(scene.buildIndex == ARTIFACT_SCENE_INDEX) {
             UnityEngine.Cursor.lockState = CursorLockMode.Confined;
