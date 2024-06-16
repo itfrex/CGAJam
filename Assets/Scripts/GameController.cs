@@ -8,12 +8,14 @@ using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using System;
 using System.Linq;
+using UnityEditor;
 
 
 public class GameController : MonoBehaviour
 {
     public const float BPM = 150;
     private const int ARTIFACT_SCENE_INDEX = 1;
+    private const int WIN_SCENE_INDEX = 6;
     private static GameController _instance;
     public static GameController Instance{
         get{
@@ -139,6 +141,10 @@ public class GameController : MonoBehaviour
     public void WinStage(){
         StopAllCoroutines();
         stageNumber++;
+        if(stageNumber >= stageOrder.Length){
+            WinGame();
+            return;
+        }
         StartCoroutine(BlackFadeIn(0.05f, ARTIFACT_SCENE_INDEX));
     }
     public void ProceedStage(){
@@ -152,7 +158,6 @@ public class GameController : MonoBehaviour
         crystalCount = 0;
         artifacts = new List<Artifact>();
         audioSource.Stop();
-        AudioManager.instance.Stop("MenuIntro");
         AudioManager.instance.Play("StartGame");
         audioSource.clip = AudioManager.instance.GetClip("GameMusic");
         audioSource.PlayScheduled(AudioSettings.dspTime + 1f);
@@ -193,6 +198,9 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
     }
+    public void WinGame(){
+        StartCoroutine(BlackFadeIn(0.05f, WIN_SCENE_INDEX));
+    }
     
     IEnumerator BlackFadeIn(float speed, int scene){
         float fade = blackFadeEffect.passMaterial.GetFloat("_FadeValue");;
@@ -223,6 +231,12 @@ public class GameController : MonoBehaviour
             if(difficulty > 0) StartLevel();
         }else if(scene.buildIndex == ARTIFACT_SCENE_INDEX) {
             UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+            GameController.Instance.SetDitherEffect(false);
+        }else if(scene.buildIndex == WIN_SCENE_INDEX) {
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+            audioSource.Stop();
+            audioSource.clip = AudioManager.instance.GetClip("Win");
+            audioSource.Play();
             GameController.Instance.SetDitherEffect(false);
         }
     }

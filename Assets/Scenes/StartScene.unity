@@ -1425,22 +1425,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5967328219080779611, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 18fdcc643f9d86049984023d3c406883, type: 3}
     - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
         type: 3}
       propertyPath: enemies.Array.data[0]
-      value: 
-      objectReference: {fileID: 3262389611264880215, guid: 320ef7e2128ddad41833231543bd9e04,
-        type: 3}
-    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
-        type: 3}
-      propertyPath: enemies.Array.data[1]
       value: 
       objectReference: {fileID: 7503935359360772856, guid: d2042c966e0538544886faec1a7fb447,
         type: 3}
     - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
         type: 3}
+      propertyPath: enemies.Array.data[1]
+      value: 
+      objectReference: {fileID: 3262389611264880215, guid: 320ef7e2128ddad41833231543bd9e04,
+        type: 3}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
       propertyPath: stageOrder.Array.size
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
         type: 3}
@@ -1450,17 +1455,77 @@ PrefabInstance:
     - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
         type: 3}
       propertyPath: stageOrder.Array.data[3]
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
         type: 3}
       propertyPath: stageOrder.Array.data[4]
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
         type: 3}
       propertyPath: stageOrder.Array.data[5]
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 3eb962cbd64001048b73db2851cd17f8, type: 3}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[0].loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[0].name
+      value: GameMusic
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[1].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 18fdcc643f9d86049984023d3c406883, type: 3}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[1].name
+      value: Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[2].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 52fc73fb797dfdf4da4f572efc5107e3, type: 3}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[2].loop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[2].name
+      value: StartGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[3].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 8f94c5dac7dde1e409e5c86b00455b68, type: 3}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[3].name
+      value: Win
+      objectReference: {fileID: 0}
+    - target: {fileID: 8778015951051648276, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: sounds.Array.data[3].volume
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2283,7 +2348,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Wizard game
+  m_text: 'All Wizzed Up
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0b82b25c4b2ff7c40a6d12abdbc11058, type: 2}
   m_sharedMaterial: {fileID: 3727526794728195582, guid: 0b82b25c4b2ff7c40a6d12abdbc11058,
