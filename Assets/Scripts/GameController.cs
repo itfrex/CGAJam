@@ -6,9 +6,12 @@ using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using System;
+
 
 public class GameController : MonoBehaviour
 {
+    public const float BPM = 150;
     private static GameController _instance;
     public static GameController Instance{
         get{
@@ -19,6 +22,8 @@ public class GameController : MonoBehaviour
     [SerializeField] FullScreenPassRendererFeature blackFadeEffect;
     [SerializeField] FullScreenPassRendererFeature quantizerEffect;
     [SerializeField] FullScreenPassRendererFeature paletteSwapEffect;
+    public AudioSource audioSource;   
+    public Sound[] sounds;
     private PlayerController player;
     public bool doSpawning;
     public GameObject[] enemies;
@@ -29,6 +34,8 @@ public class GameController : MonoBehaviour
     public List<Artifact> artifacts;
     private float enemySpawnTime = 2f;
     public int gameState;
+    private int navMesh;
+    public float volume;
 
     private void Awake() {
             if(_instance != null && _instance != this){
@@ -39,9 +46,20 @@ public class GameController : MonoBehaviour
                 StartLevel();
             }
         SceneManager.sceneLoaded += StateOpener;
+        foreach (Sound s in sounds)
+        {
+            s.source = gameObject.AddComponent<AudioSource>();
+            s.source.outputAudioMixerGroup = s.group;
+            s.source.clip = s.clip;
+
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+            s.source.loop = s.loop;
+        }
         DontDestroyOnLoad(gameObject);
     }
     public void StartLevel(){
+        navMesh = NavMesh.GetAreaFromName("Flying");
         SetDitherEffect(true);
         StartCoroutine(DeathFadeOut());
         StartCoroutine(BlackFadeOut(0.05f));
@@ -64,7 +82,7 @@ public class GameController : MonoBehaviour
             Vector3 point;
             if(enemyCount < enemyCap && RandomPoint(player.transform.position, 30, out point)){
                 yield return new WaitForEndOfFrame();
-                GameObject enemy = Instantiate(enemies[Random.Range(0, enemies.Length)], point, Quaternion.identity);
+                GameObject enemy = Instantiate(enemies[UnityEngine.Random.Range(0, enemies.Length)], point, Quaternion.identity);
                 enemy.GetComponent<IEnemy>().Spawn(enemyCount);
                 aliveEnemies[enemyCount] = enemy;
                 enemyCount++;
@@ -79,7 +97,7 @@ public class GameController : MonoBehaviour
     {
         for (int i = 0; i < 30; i++)
         {
-            float rand = Random.Range(0,360);
+            float rand = UnityEngine.Random.Range(0,360);
             Vector3 randomPoint = center + new Vector3(Mathf.Cos(rand),0,Mathf.Sin(rand)) * range;
             NavMeshHit hit;
             if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
@@ -107,7 +125,7 @@ public class GameController : MonoBehaviour
         }
     }
     public GameObject GetRandomEnemy(){
-        return aliveEnemies[Random.Range(0, enemyCount)];
+        return aliveEnemies[UnityEngine.Random.Range(0, enemyCount)];
     }
     public GameObject GetNearestEnemy(Vector3 point){
         float best = Mathf.Infinity;
@@ -197,4 +215,77 @@ public class GameController : MonoBehaviour
             }
         }
     }
+    public bool GetPlayerNavPoint(out Vector3 point){
+        NavMeshHit hit; 
+            if(NavMesh.SamplePosition(player.transform.position, out hit, 10, navMesh)){
+                point = hit.position;
+                return true;
+            }else{
+                point = Vector3.zero;
+                return false;
+            }
+    }
+    public void PlayAtPoint(string name, Vector3 point){
+        Sound s = Array.Find(sounds, Sound => Sound.name == name);
+    }
+
+    public void Play(string name)
+    {
+        Sound s = Array.Find(sounds, Sound => Sound.name == name);
+        if (s == null)
+            return;
+        s.source.Play();
+    }
+
+    public void Pause(string name, bool paused)
+    {
+        Sound s = Array.Find(sounds, Sound => Sound.name == name);
+        if (s == null)
+            return;
+        if (paused)
+            s.source.Pause();
+        else
+            s.source.UnPause();
+    }
+
+    public void Stop(string name)
+    {
+        Sound s = Array.Find(sounds, Sound => Sound.name == name);
+        if (s == null)
+            return;
+        if (s.source)
+            s.source.Stop();
+    }
+
+    public float Time(string name)
+    {
+        Sound s = Array.Find(sounds, Sound => Sound.name == name);
+        if (s == null)
+            return 0f;
+        return s.source.time;
+    }
+
+    public void ResetTime(string name)
+    {
+        Sound s = Array.Find(sounds, Sound => Sound.name == name);
+        if (s == null)
+            return;
+        s.source.time = 0;
+    }
+
+    public void TransitionSong(string name1, string name2)
+    {
+        Sound firstSong = Array.Find(sounds, sound => sound.name == name1);
+        Sound secondSong = Array.Find(sounds, sound => sound.name == name2);
+
+        if (firstSong == null && secondSong == null)
+            return;
+
+        float transitionTime = firstSong.source.time;
+        secondSong.source.time = transitionTime;
+
+        firstSong.source.Stop();
+        secondSong.source.Play();
+    }
+
 }

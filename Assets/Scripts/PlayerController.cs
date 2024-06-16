@@ -16,6 +16,13 @@ using UnityEngine.UIElements;
 public class PlayerController : MonoBehaviour
 {
     private const int PROJECTILE_CAP = 3000;
+    private const float BEAT_TIME = 240/GameController.BPM;
+    private const float VIGNETTE_STRENGTH = 0.4f;
+    private const float HEAL_TIME = 5f;
+    private const float INVULN_TIME = 1f;
+    private const float MIN_FREQ_CUTOFF = 1000;
+    private const float MAX_FREQ_CUTOFF = 22000-MIN_FREQ_CUTOFF;
+    
     public Transform cam;
     public Graphic cursor;
     public Rigidbody rb;
@@ -39,7 +46,6 @@ public class PlayerController : MonoBehaviour
     private int magicIndex;
     [SerializeField] private SerializableInterface<ISpellBehaviour>[] spells;
 
-    private Vector3 aimPoint;
     public LayerMask aimLayers;
     public LayerMask jumpLayers;
     public Vector3 aimDir;
@@ -51,6 +57,7 @@ public class PlayerController : MonoBehaviour
     public float chaosMult = 1;
     public float knockbackMult = 1;
     public float accuracyMult = 1;
+    private float volume;
     private float timer;
     public bool randomizeSpellOrder = false;
 
@@ -60,14 +67,10 @@ public class PlayerController : MonoBehaviour
     public AnimationCurve vignetteCurve;
     public AudioLowPassFilter audioFilter;
     [SerializeField] AudioClip[] hurtSFX;
-    private const float VIGNETTE_STRENGTH = 0.4f;
-    private const float HEAL_TIME = 5f;
-    private const float INVULN_TIME = 1f;
-    private const float MIN_FREQ_CUTOFF = 1000;
-    private const float MAX_FREQ_CUTOFF = 22000-MIN_FREQ_CUTOFF;
-    
     [SerializeField] private AudioClip[] magicSounds;
-    
+    private int prevBeat;
+    private int currBeat;
+    [SerializeField] float musicOffset;
     void Start()
     {
         if(magicColors.Length != spells.Length){
@@ -97,7 +100,6 @@ public class PlayerController : MonoBehaviour
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, aimLayers)){
             aimDir = (hit.point-projSpawn.position).normalized.normalized;
             Debug.DrawLine(cam.position, hit.point);
-            aimPoint = hit.point;
         }
         else{
             aimDir = (cam.transform.position + cam.transform.forward*100-projSpawn.position).normalized.normalized;
@@ -123,10 +125,13 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown("k")){
             Hurt();
         }
-        timer += Time.deltaTime*chaosMult;
-        if(timer >= 1){
+        if(Input.GetKeyDown("b")){
+            AudioListener.volume = Random.Range(0,1f);
+        }
+        currBeat = (int)((GameController.Instance.audioSource.time+musicOffset) / (BEAT_TIME/chaosMult));
+        if(currBeat > prevBeat){
+            prevBeat = currBeat;
             BumpMagic();
-            timer = 0;
         }
         if (cooldown>0) cooldown -= Time.deltaTime*firerateMult;
         
