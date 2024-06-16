@@ -35,7 +35,7 @@ public class GameController : MonoBehaviour
     public List<Artifact> artifacts;
     private float enemySpawnTime = 5f;
     private int navMesh;
-    private int difficulty=1;
+    public int difficulty=1;
     private bool hiContrast;
     [SerializeField] private int[] stageOrder;
 
@@ -50,23 +50,24 @@ public class GameController : MonoBehaviour
         hiContrast = paletteSwapEffect.passMaterial.GetColor("_White") == Color.white;
         DontDestroyOnLoad(gameObject);
     }
+    public void InitGameplay(){
+    navMesh = NavMesh.GetAreaFromName("Flying");
+    StartCoroutine(DeathFadeOut());
+    StartCoroutine(BlackFadeOut(0.05f));
+    player = GameObject.FindObjectOfType<PlayerController>();
+    aliveEnemies = new GameObject[enemyCap];
+    enemyCount = 0;
+    foreach (Artifact a in artifacts){
+        foreach (Artifact.Effect e in a.effects){
+            e.effect.Value.ApplyEffect(e.amt);
+        }
+    }
+    }
     public void StartLevel(){
         Debug.Log("Game Start!");
-        navMesh = NavMesh.GetAreaFromName("Flying");
         enemySpawnTime = 4/difficulty;
-        SetDitherEffect(true);
-        StartCoroutine(DeathFadeOut());
-        StartCoroutine(BlackFadeOut(0.05f));
-        player = GameObject.FindObjectOfType<PlayerController>();
-        aliveEnemies = new GameObject[enemyCap];
-        enemyCount = 0;
         doSpawning = true;
         StartCoroutine(SpawnLoop());
-        foreach (Artifact a in artifacts){
-            foreach (Artifact.Effect e in a.effects){
-                e.effect.Value.ApplyEffect(e.amt);
-            }
-        }
     }
     public PlayerController GetPlayer(){
         return player;
@@ -144,7 +145,7 @@ public class GameController : MonoBehaviour
         StartCoroutine(BlackFadeIn(0.05f, stageOrder[difficulty-1]));
     }
     public void StartGame(){
-        difficulty = 1;
+        difficulty = 0;
         audioSource.Stop();
         AudioManager.instance.Stop("MenuIntro");
         AudioManager.instance.Play("StartGame");
@@ -213,7 +214,8 @@ public class GameController : MonoBehaviour
             audioSource.PlayScheduled(0.5f + AudioManager.instance.GetLength("MenuIntro"));
         }else if(stageOrder.Contains(scene.buildIndex)){
             SetDitherEffect(true);
-            StartLevel();
+            InitGameplay();
+            if(difficulty > 0) StartLevel();
         }else if(scene.buildIndex == ARTIFACT_SCENE_INDEX) {
             UnityEngine.Cursor.lockState = CursorLockMode.Confined;
             GameController.Instance.SetDitherEffect(false);
