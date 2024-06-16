@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullName: Joyride
   description: Take to the skies! Increases spell knockback and firerate.
-  image: {fileID: 0}
+  image: {fileID: 1189383187, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
   - effect:

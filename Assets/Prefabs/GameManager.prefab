@@ -60,6 +60,7 @@ MonoBehaviour:
   - {fileID: 7503935359360772856, guid: d2042c966e0538544886faec1a7fb447, type: 3}
   - {fileID: 3262389611264880215, guid: 320ef7e2128ddad41833231543bd9e04, type: 3}
   - {fileID: 5514308601842121376, guid: 0f272124fe93eec498a01bb4cce5c131, type: 3}
+  - {fileID: 7982089412035264113, guid: 8dd4a58aaabe4064c860aa6a202ca82a, type: 3}
   aliveEnemies: []
   crystalCount: 0
   artifacts: []
@@ -79,7 +80,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

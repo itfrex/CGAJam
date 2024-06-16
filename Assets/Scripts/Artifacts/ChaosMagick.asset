@@ -29,6 +29,18 @@ MonoBehaviour:
       rawReference:
         rid: 6536932297225797675
     amt: 2
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932356508352529
+    amt: 1.2
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932356508352531
+    amt: 1.2
   references:
     version: 2
     RefIds:
@@ -37,4 +49,10 @@ MonoBehaviour:
       data: 
     - rid: 6536932297225797675
       type: {class: ChaosMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932356508352529
+      type: {class: AccuracyMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932356508352531
+      type: {class: KnockbackMult, ns: , asm: Assembly-CSharp}
       data: 

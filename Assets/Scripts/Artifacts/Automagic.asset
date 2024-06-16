@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullName: Automagic
   description: Greatly increases firerate! Slightly decreases accuracy.
-  image: {fileID: 0}
+  image: {fileID: 1587788187, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 1
   effects:
   - effect:
@@ -22,7 +22,7 @@ MonoBehaviour:
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797648
-    amt: 1.75
+    amt: 1.7
   - effect:
       mode: 1
       unityReference: {fileID: 0}

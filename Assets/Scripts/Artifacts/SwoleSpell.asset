@@ -15,18 +15,27 @@ MonoBehaviour:
   fullName: Swole Spell
   description: Magic lasts twice as long, This affects how many enemies the spell
     can hit too!
-  image: {fileID: 0}
+  image: {fileID: 344818725, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 1
   effects:
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
-        rid: 6536932297225797647
+        rid: 6536932356508352532
     amt: 2
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932356508352533
+    amt: 1.2
   references:
     version: 2
     RefIds:
-    - rid: 6536932297225797647
+    - rid: 6536932356508352532
       type: {class: SpellLifeMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932356508352533
+      type: {class: KnockbackMult, ns: , asm: Assembly-CSharp}
       data: 

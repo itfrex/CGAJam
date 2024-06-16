@@ -258,18 +258,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c0bb15efdf1232438128b566b075f22, type: 3}
---- !u!114 &142450498 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
-    type: 3}
-  m_PrefabInstance: {fileID: 1216666274}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75017e6dd1596364f8ec1ddbfcc80eaf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &344083526
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -351,6 +339,7 @@ GameObject:
   - component: {fileID: 458549741}
   - component: {fileID: 458549740}
   - component: {fileID: 458549744}
+  - component: {fileID: 458549745}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -461,6 +450,18 @@ MonoBehaviour:
   - {r: 0.33333334, g: 1, b: 0.33333334, a: 0}
   - {r: 1, g: 1, b: 0.33333334, a: 0}
   shiftTime: 0.05
+--- !u!114 &458549745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458549739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bce1f4f79e5cba49a8b329c92003a23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &612863514
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,9 +890,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 142450498}
-        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
-        m_MethodName: SwitchContrast
+      - m_Target: {fileID: 458549745}
+        m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
+        m_MethodName: ChangeContrast
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1424,6 +1425,43 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: enemies.Array.data[0]
+      value: 
+      objectReference: {fileID: 3262389611264880215, guid: 320ef7e2128ddad41833231543bd9e04,
+        type: 3}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: enemies.Array.data[1]
+      value: 
+      objectReference: {fileID: 7503935359360772856, guid: d2042c966e0538544886faec1a7fb447,
+        type: 3}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: stageOrder.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: stageOrder.Array.data[2]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: stageOrder.Array.data[3]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: stageOrder.Array.data[4]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318178263813896948, guid: cd36a3edf38359a489160191ced63600,
+        type: 3}
+      propertyPath: stageOrder.Array.data[5]
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1511,8 +1549,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 142450498}
-        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
+      - m_Target: {fileID: 458549745}
+        m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
         m_MethodName: ChangeVolume
         m_Mode: 1
         m_Arguments:
@@ -1889,8 +1927,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 142450498}
-        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
+      - m_Target: {fileID: 458549745}
+        m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
         m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:

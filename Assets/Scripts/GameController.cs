@@ -35,7 +35,8 @@ public class GameController : MonoBehaviour
     public List<Artifact> artifacts;
     private float enemySpawnTime = 5f;
     private int navMesh;
-    public int difficulty=1;
+    public int difficulty;
+    private int stageNumber;
     private bool hiContrast;
     [SerializeField] private int[] stageOrder;
 
@@ -78,7 +79,7 @@ public class GameController : MonoBehaviour
             Vector3 point;
             if(enemyCount < enemyCap && RandomPoint(player.transform.position, 30, out point)){
                 yield return new WaitForEndOfFrame();
-                GameObject enemy = Instantiate(enemies[UnityEngine.Random.Range(0, difficulty)], point, Quaternion.identity);
+                GameObject enemy = Instantiate(enemies[UnityEngine.Random.Range(0, Mathf.Min(difficulty,enemies.Length))], point, Quaternion.identity);
                 enemy.GetComponent<IEnemy>().Spawn(enemyCount);
                 aliveEnemies[enemyCount] = enemy;
                 enemyCount++;
@@ -137,28 +138,31 @@ public class GameController : MonoBehaviour
     }
     public void WinStage(){
         StopAllCoroutines();
+        stageNumber++;
         StartCoroutine(BlackFadeIn(0.05f, ARTIFACT_SCENE_INDEX));
     }
     public void ProceedStage(){
         StopAllCoroutines();
         difficulty += 1;
-        StartCoroutine(BlackFadeIn(0.05f, stageOrder[difficulty-1]));
+        StartCoroutine(BlackFadeIn(0.05f, stageOrder[Mathf.Min(stageOrder.Length, stageNumber)]));
     }
     public void StartGame(){
         difficulty = 0;
+        stageNumber = 0;
+        crystalCount = 0;
+        artifacts = new List<Artifact>();
         audioSource.Stop();
         AudioManager.instance.Stop("MenuIntro");
         AudioManager.instance.Play("StartGame");
         audioSource.clip = AudioManager.instance.GetClip("GameMusic");
         audioSource.PlayScheduled(AudioSettings.dspTime + 1f);
-        StartCoroutine(BlackFadeIn(0.05f, stageOrder[difficulty-1]));
+        StartCoroutine(BlackFadeIn(0.05f, stageOrder[difficulty]));
     }
     public void Lose(){
         StopAllCoroutines();
         crystalCount = 0;
-        artifacts = new List<Artifact>();
+        //artifacts = new List<Artifact>();
         doSpawning = false;
-        enemySpawnTime = 2;
         StartCoroutine(DeathFadeIn());
     }
     
@@ -178,7 +182,7 @@ public class GameController : MonoBehaviour
             fade = Mathf.Min(1, fade + 0.02f);
             yield return new WaitForSeconds(0.05f);
         }
-        SceneManager.LoadScene(stageOrder[0]);
+        SceneManager.LoadScene(stageOrder[stageNumber]);
         StartCoroutine(DeathFadeOut());
     }
     IEnumerator BlackFadeOut(float speed){
@@ -208,6 +212,8 @@ public class GameController : MonoBehaviour
     }
     private void StateOpener(Scene scene, LoadSceneMode mode){
         if(scene.buildIndex == 0){
+            Cursor.lockState = CursorLockMode.None;
+            audioSource.Stop();
             AudioManager.instance.PlayDelayed("MenuIntro", 0.5f);
             SetDitherEffect(true);
             audioSource.clip = AudioManager.instance.GetClip("Menu");
@@ -240,5 +246,9 @@ public class GameController : MonoBehaviour
     }
     public void ChangeVolume(){
         AudioListener.volume = UnityEngine.Random.Range(0,1f);
+    }
+    public void ExitToMenu(){
+        StopAllCoroutines();
+        StartCoroutine(BlackFadeIn(0.5f, 0));
     }
 }

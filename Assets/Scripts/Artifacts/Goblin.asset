@@ -15,7 +15,7 @@ MonoBehaviour:
   fullName: Goblin
   description: Go goblin mode. Increase to speed and firerate and decrease in spell
     duration and knockback.
-  image: {fileID: 0}
+  image: {fileID: -441456059, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
   - effect:

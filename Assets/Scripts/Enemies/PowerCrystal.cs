@@ -11,7 +11,7 @@ public class PowerCrystal : MonoBehaviour, IEnemy
     private Vector3 originalPos;
     private float heightOffset;
     private float timer;
-    private int life = 25;
+    private int life;
     public void Start(){
         Spawn();
         originalPos = transform.position;
@@ -19,6 +19,7 @@ public class PowerCrystal : MonoBehaviour, IEnemy
     }
     public bool Spawn(int id=0){
         GameController.Instance.crystalCount++;
+        life = 10 * GameController.Instance.difficulty + 5;
         return true;
     }
     public bool Kill(){

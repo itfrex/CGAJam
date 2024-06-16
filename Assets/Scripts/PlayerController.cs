@@ -119,11 +119,8 @@ public class PlayerController : MonoBehaviour
                 CastWand();
             }
         }
-        if(Input.GetButtonDown("Fire2")){
-            BumpMagic();
-        }
-        if(Input.GetKeyDown("k")){
-            Hurt();
+        if (Input.GetKeyUp("k")){
+            GameController.Instance.ExitToMenu();
         }
         currBeat = (int)((GameController.Instance.audioSource.time+musicOffset) / (BEAT_TIME/chaosMult));
         if(currBeat != prevBeat){

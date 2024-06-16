@@ -8165,7 +8165,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &410087040
 Light:
   m_ObjectHideFlags: 0
@@ -19615,7 +19615,7 @@ PrefabInstance:
     - target: {fileID: 8497137432675866733, guid: 1f1cbdd37c7a1db4389ca2ed2e604bfb,
         type: 3}
       propertyPath: musicOffset
-      value: 0.125
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8497137432675866733, guid: 1f1cbdd37c7a1db4389ca2ed2e604bfb,
         type: 3}

@@ -15,7 +15,7 @@ MonoBehaviour:
   fullName: Chaos Agent
   description: More chaos! Increase rate of magic change and slightly boosts fire
     rate and spell duration.
-  image: {fileID: 0}
+  image: {fileID: -1472697248, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
   - effect:

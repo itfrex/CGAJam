@@ -10,8 +10,8 @@ public class TurretController : MonoBehaviour, IEnemy
     private const float WAIT_FACTOR = 0.1f;
     private const float SEARCH_DELAY = 1;
     private const float TARGET_TIME = 3;
-    private const float SHOOT_COOLDOWN = 1;
-    private const float ROT_SPEED = 0.05f;
+    private const float SHOOT_COOLDOWN = 3;
+    private const float ROT_SPEED = 0.075f;
 
     private int id;
     private NavMeshAgent agent;
@@ -25,20 +25,23 @@ public class TurretController : MonoBehaviour, IEnemy
     private LineRenderer line;
     [SerializeField] LayerMask collisionLayer;
     private int health = 3;
-
+    [SerializeField] AnimationCurve targetingAnimCurve;
+    [SerializeField] GameObject model;
+    [SerializeField] AudioSource audioSource;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         path = new NavMeshPath();
         searchRoutine = StartCoroutine(CalculatePath(GameController.Instance.GetPlayer().gameObject));
         line = GetComponent<LineRenderer>();
-        aimDir = transform.forward;
+        aimDir = Random.onUnitSphere;
     }
 
     public bool Spawn(int id){
         this.id = id;
         health = 3;
-        timer = SHOOT_COOLDOWN;
+        timer = SHOOT_COOLDOWN+TARGET_TIME;
+        audioSource.PlayScheduled(AudioSettings.dspTime + SHOOT_COOLDOWN);
         return true;
     }
     public bool Kill(){
@@ -66,9 +69,11 @@ public class TurretController : MonoBehaviour, IEnemy
         Debug.DrawRay(transform.position, targetDir, Color.red);
         aimDir = Vector3.RotateTowards(aimDir, targetDir.normalized, ROT_SPEED/targetDir.magnitude, 0);
         Debug.DrawRay(transform.position, aimDir, Color.cyan);
-        if (timer > 0 ){
+        model.transform.forward = aimDir;
+        if (timer > TARGET_TIME ){
             line.SetPosition(1, transform.position);
         }else{
+            line.startWidth = targetingAnimCurve.Evaluate(timer/TARGET_TIME);
             RaycastHit hit;
             if(Physics.Raycast(transform.position, aimDir, out hit, 100f, collisionLayer)){
                 line.SetPosition(1, hit.point);
@@ -77,11 +82,12 @@ public class TurretController : MonoBehaviour, IEnemy
                 line.SetPosition(1, transform.position + aimDir*100);
                 Debug.DrawLine(transform.position, transform.position + aimDir*100);
             }
-            if(timer < TARGET_TIME * -1){
+            if(timer <= 0){
                     if(Physics.Raycast(transform.position, aimDir, out hit, 100f, collisionLayer) && hit.transform.CompareTag("Player")){
                         GameController.Instance.GetPlayer().Hurt();
                     }
-                    timer = SHOOT_COOLDOWN;
+                    timer = SHOOT_COOLDOWN+TARGET_TIME;
+                    audioSource.PlayScheduled(AudioSettings.dspTime + SHOOT_COOLDOWN);
                 }
         }
         timer -= Time.fixedDeltaTime;

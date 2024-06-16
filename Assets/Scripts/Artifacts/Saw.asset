@@ -15,7 +15,7 @@ MonoBehaviour:
   fullName: Saw
   description: Massive increase in firerate, massive decrease in accuracy and spell
     duration.
-  image: {fileID: 0}
+  image: {fileID: -991929784, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
   - effect:

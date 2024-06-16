@@ -15,7 +15,7 @@ MonoBehaviour:
   fullName: Scoped Wand
   description: Massive increase in accuracy, increase in spell duration, and slight
     decrease in firerate.
-  image: {fileID: 0}
+  image: {fileID: 858625604, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
   - effect:

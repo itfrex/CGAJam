@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullName: Strategy Guide
   description: Decreases firerate, greatly increases speed and spell duration.
-  image: {fileID: 0}
+  image: {fileID: -1500076761, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
   - effect:
@@ -22,7 +22,7 @@ MonoBehaviour:
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797662
-    amt: 0.75
+    amt: 0.7
   - effect:
       mode: 1
       unityReference: {fileID: 0}
@@ -34,19 +34,19 @@ MonoBehaviour:
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797664
-    amt: 2
+    amt: 1.75
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797666
-    amt: 0.75
+    amt: 0.7
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797668
-    amt: 3
+    amt: 2.5
   references:
     version: 2
     RefIds:
