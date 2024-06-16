@@ -125,11 +125,8 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown("k")){
             Hurt();
         }
-        if(Input.GetKeyDown("b")){
-            AudioListener.volume = Random.Range(0,1f);
-        }
         currBeat = (int)((GameController.Instance.audioSource.time+musicOffset) / (BEAT_TIME/chaosMult));
-        if(currBeat > prevBeat){
+        if(currBeat != prevBeat){
             prevBeat = currBeat;
             BumpMagic();
         }

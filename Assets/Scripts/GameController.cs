@@ -7,11 +7,13 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using System;
+using System.Linq;
 
 
 public class GameController : MonoBehaviour
 {
     public const float BPM = 150;
+    private const int ARTIFACT_SCENE_INDEX = 1;
     private static GameController _instance;
     public static GameController Instance{
         get{
@@ -22,8 +24,7 @@ public class GameController : MonoBehaviour
     [SerializeField] FullScreenPassRendererFeature blackFadeEffect;
     [SerializeField] FullScreenPassRendererFeature quantizerEffect;
     [SerializeField] FullScreenPassRendererFeature paletteSwapEffect;
-    public AudioSource audioSource;   
-    public Sound[] sounds;
+    public AudioSource audioSource;
     private PlayerController player;
     public bool doSpawning;
     public GameObject[] enemies;
@@ -32,10 +33,11 @@ public class GameController : MonoBehaviour
     private int enemyCap = 100;
     public int crystalCount;
     public List<Artifact> artifacts;
-    private float enemySpawnTime = 2f;
-    public int gameState;
+    private float enemySpawnTime = 5f;
     private int navMesh;
-    public float volume;
+    private int difficulty=1;
+    private bool hiContrast;
+    [SerializeField] private int[] stageOrder;
 
     private void Awake() {
             if(_instance != null && _instance != this){
@@ -43,23 +45,15 @@ public class GameController : MonoBehaviour
                 return;
             }else{
                 _instance = this;
-                StartLevel();
             }
         SceneManager.sceneLoaded += StateOpener;
-        foreach (Sound s in sounds)
-        {
-            s.source = gameObject.AddComponent<AudioSource>();
-            s.source.outputAudioMixerGroup = s.group;
-            s.source.clip = s.clip;
-
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
-            s.source.loop = s.loop;
-        }
+        hiContrast = paletteSwapEffect.passMaterial.GetColor("_White") == Color.white;
         DontDestroyOnLoad(gameObject);
     }
     public void StartLevel(){
+        Debug.Log("Game Start!");
         navMesh = NavMesh.GetAreaFromName("Flying");
+        enemySpawnTime = 4/difficulty;
         SetDitherEffect(true);
         StartCoroutine(DeathFadeOut());
         StartCoroutine(BlackFadeOut(0.05f));
@@ -78,17 +72,18 @@ public class GameController : MonoBehaviour
         return player;
     }
     private IEnumerator SpawnLoop(){
+        Debug.Log("Spawn loop started with difficulty " + difficulty);
         while(doSpawning){
             Vector3 point;
             if(enemyCount < enemyCap && RandomPoint(player.transform.position, 30, out point)){
                 yield return new WaitForEndOfFrame();
-                GameObject enemy = Instantiate(enemies[UnityEngine.Random.Range(0, enemies.Length)], point, Quaternion.identity);
+                GameObject enemy = Instantiate(enemies[UnityEngine.Random.Range(0, difficulty)], point, Quaternion.identity);
                 enemy.GetComponent<IEnemy>().Spawn(enemyCount);
                 aliveEnemies[enemyCount] = enemy;
                 enemyCount++;
             }
             yield return new WaitForSeconds(enemySpawnTime);
-            enemySpawnTime = Mathf.Max(0.1f, enemySpawnTime*0.99f);
+            enemySpawnTime = Mathf.Max(1/difficulty, enemySpawnTime*0.99f);
         }
     }
 
@@ -141,13 +136,21 @@ public class GameController : MonoBehaviour
     }
     public void WinStage(){
         StopAllCoroutines();
-        gameState = 1;
-        StartCoroutine(BlackFadeIn(0.05f, 1));
+        StartCoroutine(BlackFadeIn(0.05f, ARTIFACT_SCENE_INDEX));
     }
     public void ProceedStage(){
         StopAllCoroutines();
-        gameState = 0;
-        StartCoroutine(BlackFadeIn(0.05f, 0));
+        difficulty += 1;
+        StartCoroutine(BlackFadeIn(0.05f, stageOrder[difficulty-1]));
+    }
+    public void StartGame(){
+        difficulty = 1;
+        audioSource.Stop();
+        AudioManager.instance.Stop("MenuIntro");
+        AudioManager.instance.Play("StartGame");
+        audioSource.clip = AudioManager.instance.GetClip("GameMusic");
+        audioSource.PlayScheduled(AudioSettings.dspTime + 1f);
+        StartCoroutine(BlackFadeIn(0.05f, stageOrder[difficulty-1]));
     }
     public void Lose(){
         StopAllCoroutines();
@@ -174,7 +177,7 @@ public class GameController : MonoBehaviour
             fade = Mathf.Min(1, fade + 0.02f);
             yield return new WaitForSeconds(0.05f);
         }
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(stageOrder[0]);
         StartCoroutine(DeathFadeOut());
     }
     IEnumerator BlackFadeOut(float speed){
@@ -203,16 +206,15 @@ public class GameController : MonoBehaviour
         quantizerEffect.SetActive(active);
     }
     private void StateOpener(Scene scene, LoadSceneMode mode){
-        switch(scene.buildIndex){
-            case(0): {
-                StartLevel();
-                break;
-            }
-            case(1): {
-                UnityEngine.Cursor.lockState = CursorLockMode.Confined;
-                GameController.Instance.SetDitherEffect(false);
-                break;
-            }
+        if(scene.buildIndex == 0){
+            AudioManager.instance.PlayDelayed("MenuIntro", 0.5f);
+            audioSource.clip = AudioManager.instance.GetClip("Menu");
+            audioSource.PlayScheduled(0.5f + AudioManager.instance.GetLength("MenuIntro"));
+        }else if(stageOrder.Contains(scene.buildIndex)){
+            StartLevel();
+        }else if(scene.buildIndex == ARTIFACT_SCENE_INDEX) {
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+            GameController.Instance.SetDitherEffect(false);
         }
     }
     public bool GetPlayerNavPoint(out Vector3 point){
@@ -224,68 +226,15 @@ public class GameController : MonoBehaviour
                 point = Vector3.zero;
                 return false;
             }
+    }    public void SwitchContrast(){
+        hiContrast = !hiContrast;
+        if(hiContrast){
+            SwapColor("_White", Color.white);
+        }else{
+            SwapColor("_White", new Color(2f/3f,2f/3f,2f/3f));
+        }
     }
-    public void PlayAtPoint(string name, Vector3 point){
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
+    public void ChangeVolume(){
+        AudioListener.volume = UnityEngine.Random.Range(0,1f);
     }
-
-    public void Play(string name)
-    {
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
-        if (s == null)
-            return;
-        s.source.Play();
-    }
-
-    public void Pause(string name, bool paused)
-    {
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
-        if (s == null)
-            return;
-        if (paused)
-            s.source.Pause();
-        else
-            s.source.UnPause();
-    }
-
-    public void Stop(string name)
-    {
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
-        if (s == null)
-            return;
-        if (s.source)
-            s.source.Stop();
-    }
-
-    public float Time(string name)
-    {
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
-        if (s == null)
-            return 0f;
-        return s.source.time;
-    }
-
-    public void ResetTime(string name)
-    {
-        Sound s = Array.Find(sounds, Sound => Sound.name == name);
-        if (s == null)
-            return;
-        s.source.time = 0;
-    }
-
-    public void TransitionSong(string name1, string name2)
-    {
-        Sound firstSong = Array.Find(sounds, sound => sound.name == name1);
-        Sound secondSong = Array.Find(sounds, sound => sound.name == name2);
-
-        if (firstSong == null && secondSong == null)
-            return;
-
-        float transitionTime = firstSong.source.time;
-        secondSong.source.time = transitionTime;
-
-        firstSong.source.Stop();
-        secondSong.source.Play();
-    }
-
 }

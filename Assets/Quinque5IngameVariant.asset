@@ -58,11 +58,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: QuinqueFive
+  m_Name: Quinque5IngameVariant
   m_EditorClassIdentifier: 
-  hashCode: -2122085954
+  hashCode: 791792361
   material: {fileID: 3727526794728195582}
-  materialHashCode: 419499998
+  materialHashCode: 402654889
   m_Version: 1.1.0
   m_SourceFontFileGUID: d248211da07f83e4283b610f7c16fd9d
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: d248211da07f83e4283b610f7c16fd9d,
@@ -2543,5 +2543,5 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FaceColor: {r: 11.984315, g: 11.984315, b: 11.984315, a: 1}
   m_BuildTextureStacks: []

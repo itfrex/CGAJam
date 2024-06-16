@@ -5,13 +5,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class TurretController : MonoBehaviour
+public class TurretController : MonoBehaviour, IEnemy
 {
     private const float WAIT_FACTOR = 0.1f;
     private const float SEARCH_DELAY = 1;
     private const float TARGET_TIME = 3;
     private const float SHOOT_COOLDOWN = 1;
-    private const float ROT_SPEED = 0.01f;
+    private const float ROT_SPEED = 0.05f;
 
     private int id;
     private NavMeshAgent agent;
@@ -24,7 +24,8 @@ public class TurretController : MonoBehaviour
     private float timer;
     private LineRenderer line;
     [SerializeField] LayerMask collisionLayer;
-    // Start is called before the first frame update
+    private int health = 3;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -36,6 +37,7 @@ public class TurretController : MonoBehaviour
 
     public bool Spawn(int id){
         this.id = id;
+        health = 3;
         timer = SHOOT_COOLDOWN;
         return true;
     }
@@ -48,7 +50,11 @@ public class TurretController : MonoBehaviour
         return true;
     }
     public bool Hit(){
-        return Kill();
+        health -= 1;
+        if(health == 0){
+            return Kill();
+        }
+        return true;
     }
     
     public void SetId(int id){
@@ -56,20 +62,18 @@ public class TurretController : MonoBehaviour
     }
     void FixedUpdate(){
         line.SetPosition(0, transform.position);
+        targetDir = GameController.Instance.GetPlayer().transform.position-transform.position;
+        Debug.DrawRay(transform.position, targetDir, Color.red);
+        aimDir = Vector3.RotateTowards(aimDir, targetDir.normalized, ROT_SPEED/targetDir.magnitude, 0);
+        Debug.DrawRay(transform.position, aimDir, Color.cyan);
         if (timer > 0 ){
             line.SetPosition(1, transform.position);
         }else{
-            targetDir = (GameController.Instance.GetPlayer().transform.position-transform.position).normalized;
-            Debug.DrawRay(transform.position, targetDir, Color.red);
-            aimDir = Vector3.RotateTowards(aimDir, targetDir, ROT_SPEED, 0);
-            Debug.DrawRay(transform.position, aimDir, Color.cyan);
             RaycastHit hit;
             if(Physics.Raycast(transform.position, aimDir, out hit, 100f, collisionLayer)){
-                Debug.Log("HIT!");
                 line.SetPosition(1, hit.point);
                 Debug.DrawLine(transform.position, hit.point);
             }else{
-                Debug.Log("NO HIT!");
                 line.SetPosition(1, transform.position + aimDir*100);
                 Debug.DrawLine(transform.position, transform.position + aimDir*100);
             }
