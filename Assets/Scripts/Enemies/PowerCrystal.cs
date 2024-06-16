@@ -12,6 +12,7 @@ public class PowerCrystal : MonoBehaviour, IEnemy
     private float heightOffset;
     private float timer;
     private int life;
+    public GameObject beam;
     public void Start(){
         Spawn();
         originalPos = transform.position;
@@ -29,6 +30,7 @@ public class PowerCrystal : MonoBehaviour, IEnemy
         if(GameController.Instance.crystalCount <= 0){
             GameController.Instance.WinStage();
         }
+        Destroy(beam);
         Destroy(gameObject);
         return true;
     }

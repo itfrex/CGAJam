@@ -214,10 +214,9 @@ public class GameController : MonoBehaviour
         if(scene.buildIndex == 0){
             Cursor.lockState = CursorLockMode.None;
             audioSource.Stop();
-            AudioManager.instance.PlayDelayed("MenuIntro", 0.5f);
-            SetDitherEffect(true);
             audioSource.clip = AudioManager.instance.GetClip("Menu");
-            audioSource.PlayScheduled(0.5f + AudioManager.instance.GetLength("MenuIntro"));
+            audioSource.Play();
+            SetDitherEffect(true);
         }else if(stageOrder.Contains(scene.buildIndex)){
             SetDitherEffect(true);
             InitGameplay();
