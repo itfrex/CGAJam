@@ -12,17 +12,6 @@ public class ArtifactSelector : MonoBehaviour
     public Artifact[] artifacts;
     private Artifact[] selection;
     private bool cardSelected = false;
-    int colorIndex;
-    public Color[] rainbow;
-    private float timer;
-    public void Update(){
-        timer += Time.deltaTime;
-        if(timer > 0.1f){
-            colorIndex = (colorIndex+1)%rainbow.Length;
-            timer -= 0.1f;
-            GameController.Instance.SwapColor("_Magic",rainbow[colorIndex]);
-        }
-    }
     void Start(){
         selection = new Artifact[panels.Length];
         List<int> options = new List<int>();
