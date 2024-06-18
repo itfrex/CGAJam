@@ -22,7 +22,7 @@ MonoBehaviour:
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797662
-    amt: 0.7
+    amt: 0.8
   - effect:
       mode: 1
       unityReference: {fileID: 0}

@@ -10,50 +10,50 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b2e2e32529244f4cbb582ce9e38f2b4, type: 3}
-  m_Name: Saw
+  m_Name: ChaosEngine
   m_EditorClassIdentifier: 
-  fullName: Saw
-  description: Massive increase in firerate, massive decrease in accuracy and spell
-    duration.
-  image: {fileID: -991929784, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
+  fullName: Chaos Engine
+  description: More chaos! Increase rate of magic change and slightly boosts fire
+    rate and spell duration.
+  image: {fileID: -1472697248, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
-        rid: 6536932297225797656
-    amt: 2.5
+        rid: 6536932297225797676
+    amt: 2
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
-        rid: 6536932297225797658
-    amt: 3
+        rid: 6536932297225797681
+    amt: 1.5
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
-        rid: 6536932297225797659
-    amt: 0.5
+        rid: 6536932297225797680
+    amt: 1.25
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
-        rid: 6536932297225797661
-    amt: 0.5
+        rid: 6536932297225797679
+    amt: 1.2
   references:
     version: 2
     RefIds:
-    - rid: 6536932297225797656
-      type: {class: FireRateMult, ns: , asm: Assembly-CSharp}
+    - rid: 6536932297225797676
+      type: {class: ChaosMult, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 6536932297225797658
+    - rid: 6536932297225797679
       type: {class: AccuracyMult, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 6536932297225797659
-      type: {class: SpellLifeMult, ns: , asm: Assembly-CSharp}
+    - rid: 6536932297225797680
+      type: {class: FireRateMult, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 6536932297225797661
-      type: {class: KnockbackMult, ns: , asm: Assembly-CSharp}
+    - rid: 6536932297225797681
+      type: {class: SpellLifeMult, ns: , asm: Assembly-CSharp}
       data: 

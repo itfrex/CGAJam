@@ -221,6 +221,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ff661c2723b19b54182942abc5037763, type: 3}
   - {fileID: 8300000, guid: 98f3f5db336128242be029751c5d959a, type: 3}
   - {fileID: 8300000, guid: 756c2683d2428c94fafd5f9d31a778e6, type: 3}
+  musicOffset: 0
   references:
     version: 2
     RefIds:
@@ -5161,7 +5162,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: f356a18a7b21e8c43bc39ea5b4510e66, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1

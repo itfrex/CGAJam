@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ScopedWand
   m_EditorClassIdentifier: 
   fullName: Scoped Wand
-  description: Massive increase in accuracy, increase in spell duration, and slight
-    decrease in firerate.
+  description: Massive increase in accuracy and spell duration, and slight decrease
+    in firerate.
   image: {fileID: 858625604, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 0
   effects:
@@ -29,13 +29,13 @@ MonoBehaviour:
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797651
-    amt: 0.85
+    amt: 0.9
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797652
-    amt: 1.5
+    amt: 3
   - effect:
       mode: 1
       unityReference: {fileID: 0}

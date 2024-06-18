@@ -1,14 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Unity.VisualScripting;
-using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using System;
 using System.Linq;
-using UnityEditor;
 
 
 public class GameController : MonoBehaviour
@@ -53,6 +50,9 @@ public class GameController : MonoBehaviour
         hiContrast = paletteSwapEffect.passMaterial.GetColor("_White") == Color.white;
         DontDestroyOnLoad(gameObject);
     }
+    private void Update(){
+
+    }
     public void InitGameplay(){
     navMesh = NavMesh.GetAreaFromName("Flying");
     StartCoroutine(DeathFadeOut());
@@ -68,7 +68,7 @@ public class GameController : MonoBehaviour
     }
     public void StartLevel(){
         Debug.Log("Game Start!");
-        enemySpawnTime = 4/difficulty;
+        enemySpawnTime = 2+2/difficulty;
         doSpawning = true;
         StartCoroutine(SpawnLoop());
     }
@@ -87,7 +87,7 @@ public class GameController : MonoBehaviour
                 enemyCount++;
             }
             yield return new WaitForSeconds(enemySpawnTime);
-            enemySpawnTime = Mathf.Max(1/difficulty, enemySpawnTime*0.99f);
+            enemySpawnTime = Mathf.Max(0.5f + 1/difficulty, enemySpawnTime*0.99f);
         }
     }
 
@@ -220,20 +220,25 @@ public class GameController : MonoBehaviour
     }
     private void StateOpener(Scene scene, LoadSceneMode mode){
         if(scene.buildIndex == 0){
-            Cursor.lockState = CursorLockMode.None;
+            Cursor.lockState = CursorLockMode.Locked;
             audioSource.Stop();
             audioSource.clip = AudioManager.instance.GetClip("Menu");
             audioSource.Play();
+            StartCoroutine(DeathFadeOut());
+            StartCoroutine(BlackFadeOut(0.05f));
             SetDitherEffect(true);
         }else if(stageOrder.Contains(scene.buildIndex)){
             SetDitherEffect(true);
             InitGameplay();
             if(difficulty > 0) StartLevel();
         }else if(scene.buildIndex == ARTIFACT_SCENE_INDEX) {
-            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
             GameController.Instance.SetDitherEffect(false);
+            StartCoroutine(DeathFadeOut());
         }else if(scene.buildIndex == WIN_SCENE_INDEX) {
-            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            StartCoroutine(DeathFadeOut());
+            StartCoroutine(BlackFadeOut(0.05f));
             audioSource.Stop();
             audioSource.clip = AudioManager.instance.GetClip("Win");
             audioSource.Play();

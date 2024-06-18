@@ -11,7 +11,7 @@ public class Bouncer : MonoBehaviour, IEnemy
     private const float WAIT_FACTOR = 0.1f;
     private const float SEARCH_DELAY = 1;
     private const float SPEED = 10f;
-    private const float JUMP_COOLDOWN = 0.25f;
+    private const float JUMP_COOLDOWN = 0.5f;
     private const float LUNGE_DIST = 10f;
     private Rigidbody rb;
     private int id; 
@@ -80,6 +80,7 @@ public class Bouncer : MonoBehaviour, IEnemy
                         rb.velocity = FindLaunchAngle(transform.position, targetPos, targetVel);
                     }
                 }
+                jump_timer = JUMP_COOLDOWN;
                 AudioSource.PlayClipAtPoint(livingSounds[Random.Range(0, livingSounds.Length)], transform.position);
             }
         }

@@ -22,13 +22,19 @@ MonoBehaviour:
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797648
-    amt: 1.7
+    amt: 2
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932297225797649
     amt: 1.5
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932390043648009
+    amt: 0.9
   references:
     version: 2
     RefIds:
@@ -37,4 +43,7 @@ MonoBehaviour:
       data: 
     - rid: 6536932297225797649
       type: {class: AccuracyMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932390043648009
+      type: {class: SpellLifeMult, ns: , asm: Assembly-CSharp}
       data: 

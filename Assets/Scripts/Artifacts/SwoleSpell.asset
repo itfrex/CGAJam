@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SwoleSpell
   m_EditorClassIdentifier: 
   fullName: Swole Spell
-  description: Magic lasts twice as long, This affects how many enemies the spell
-    can hit too!
+  description: You have mastered the art of muscle magic... Your spells have triple
+    the lifespan and you feel more athletic.
   image: {fileID: 344818725, guid: d5c8383327e256240b666dc4b2f55ec6, type: 3}
   stackable: 1
   effects:
@@ -23,13 +23,19 @@ MonoBehaviour:
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932356508352532
-    amt: 2
+    amt: 3
   - effect:
       mode: 1
       unityReference: {fileID: 0}
       rawReference:
         rid: 6536932356508352533
     amt: 1.2
+  - effect:
+      mode: 1
+      unityReference: {fileID: 0}
+      rawReference:
+        rid: 6536932390043648011
+    amt: 1.3
   references:
     version: 2
     RefIds:
@@ -38,4 +44,7 @@ MonoBehaviour:
       data: 
     - rid: 6536932356508352533
       type: {class: KnockbackMult, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6536932390043648011
+      type: {class: SpeedMult, ns: , asm: Assembly-CSharp}
       data: 
